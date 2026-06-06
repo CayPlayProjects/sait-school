@@ -2,305 +2,873 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Набережные Челны - Викторина, Фототур и Видео | 9 Мая</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <title>Набережные Челны — 9 Мая | Викторина, Фототур, Видео</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ===================== RESET & ROOT ===================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --victory-gold: #FFD700;
-            --victory-orange: #FF8C00;
-            --victory-red: #E31E24;
-            --georgievsky-orange: #FF6B00;
-            --georgievsky-black: #1a1a1a;
-        }
-
-        body {
-            --bg: #f5f0e8;
-            --bg2: #ede5d5;
-            --surface: #ffffff;
-            --surface2: #faf6ef;
+            --gold: #FFD700;
+            --gold-dark: #D4AF37;
+            --orange: #FF6B00;
+            --red: #C8102E;
+            --dark-red: #8B0000;
+            --bg: #FAF6F0;
+            --bg2: #F0E6D6;
+            --bg-gradient: linear-gradient(135deg, #FAF6F0 0%, #F0E6D6 50%, #E8DCC4 100%);
+            --surface: rgba(255, 255, 255, 0.85);
+            --surface-solid: #ffffff;
             --text: #1a1a1a;
-            --text2: #4a3728;
-            --title: #8B0000;
-            --border: #d4c5a9;
-            --shadow: 0 4px 16px rgba(0,0,0,0.1);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
-            --hover: rgba(255,107,0,0.1);
+            --text-muted: #5a4530;
+            --border: rgba(139, 0, 0, 0.12);
+            --border-strong: rgba(139, 0, 0, 0.25);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 14px 50px rgba(0, 0, 0, 0.18);
+            --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.35);
+            --hover: rgba(255, 107, 0, 0.08);
             --input-bg: #ffffff;
-            --modal-overlay: rgba(0,0,0,0.7);
+            --overlay: rgba(0, 0, 0, 0.65);
         }
 
-        body.dark-theme {
-            --bg: #0d0d0d;
+        body.dark {
+            --bg: #0a0a0a;
             --bg2: #141414;
-            --surface: #1a1a1a;
-            --surface2: #222222;
+            --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%);
+            --surface: rgba(30, 30, 30, 0.85);
+            --surface-solid: #1a1a1a;
             --text: #f0e6d3;
-            --text2: #c4a97d;
-            --title: #FFD700;
-            --border: #404040;
-            --shadow: 0 4px 16px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
-            --hover: rgba(255,215,0,0.12);
+            --text-muted: #b89968;
+            --border: rgba(255, 215, 0, 0.18);
+            --border-strong: rgba(255, 215, 0, 0.35);
+            --hover: rgba(255, 215, 0, 0.1);
             --input-bg: #2a2a2a;
-            --modal-overlay: rgba(0,0,0,0.85);
+            --overlay: rgba(0, 0, 0, 0.85);
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: "Segoe UI", Inter, system-ui, sans-serif;
-            background: linear-gradient(180deg, var(--bg), var(--bg2));
+            font-family: 'PT Serif', Georgia, 'Times New Roman', serif;
+            background: var(--bg-gradient);
             color: var(--text);
             line-height: 1.7;
             min-height: 100vh;
             overflow-x: hidden;
-            font-size: 18px;
-            transition: background 0.3s, color 0.3s;
+            font-size: 17px;
+            transition: background 0.4s ease, color 0.4s ease;
+            cursor: none;
         }
 
+        /* ===================== КАСТОМНЫЙ КУРСОР-ЗВЕЗДА ===================== */
+        .cursor-main, .cursor-trail {
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+        }
+        .cursor-main {
+            width: 28px; height: 28px;
+            transition: width 0.25s ease, height 0.25s ease, opacity 0.2s;
+        }
+        .cursor-trail {
+            width: 6px; height: 6px;
+            background: var(--orange);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--orange), 0 0 4px var(--orange);
+            transition: width 0.2s, height 0.2s;
+        }
+        .cursor-main.hover { width: 44px; height: 44px; }
+        .cursor-main.clicking { width: 18px; height: 18px; }
+        .cursor-trail.hover { width: 10px; height: 10px; background: var(--gold); box-shadow: 0 0 16px var(--gold); }
+
+        @media (hover: none), (pointer: coarse) {
+            .cursor-main, .cursor-trail { display: none !important; }
+            body, * { cursor: auto !important; }
+        }
+
+        /* ===================== АНИМИРОВАННЫЙ ФОН ===================== */
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0;
-            height: 4px;
-            background: repeating-linear-gradient(90deg, #FF6B00 0px, #FF6B00 12px, #1a1a1a 12px, #1a1a1a 24px);
+            height: 5px;
+            background: repeating-linear-gradient(90deg, #FF6B00 0px, #FF6B00 14px, #1a1a1a 14px, #1a1a1a 28px);
             z-index: 9999;
+            box-shadow: 0 2px 10px rgba(255, 107, 0, 0.5);
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 0, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; padding-top: 40px; position: relative; z-index: 1; }
+        /* ===================== КОНТЕЙНЕР ===================== */
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 20px 60px; position: relative; z-index: 1; }
 
-        /* Панель управления */
+        /* ===================== ПАНЕЛЬ УПРАВЛЕНИЯ ===================== */
         .controls-panel {
-            position: fixed; top: 16px; right: 16px; z-index: 1000;
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
             display: flex; flex-direction: column; gap: 8px;
-            background: var(--surface); padding: 12px;
-            border-radius: 20px; box-shadow: var(--shadow-lg);
-            border: 2px solid var(--victory-gold);
-            max-width: calc(100vw - 32px);
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 14px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-strong);
+            max-width: calc(100vw - 40px);
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         .control-btn {
-            border: none; padding: 10px 18px; border-radius: 999px;
-            font-size: 0.85rem; font-weight: 700; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            border: none; padding: 11px 20px; border-radius: 999px;
+            font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600;
+            letter-spacing: 0.5px;
             color: #ffffff; white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; gap: 8px;
+            position: relative; overflow: hidden;
         }
-        .control-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        #themeToggle { background: #E31E24; }
-        #editBtn { background: #FF6B00; }
-        #optimizeBtn { background: #8B0000; }
-        #backupBtn { background: #D4AF37; color: #1a1a1a; }
-        #clearCacheBtn { background: #B71C1C; }
-        #helpBtn { background: #FF8C00; }
+        .control-btn::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .control-btn:hover::before { opacity: 1; }
+        .control-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .control-btn:active { transform: translateY(-1px) scale(0.98); }
+        #themeToggle { background: linear-gradient(135deg, #C8102E, #8B0000); }
+        #editBtn { background: linear-gradient(135deg, #FF6B00, #FF8C00); }
+        #optimizeBtn { background: linear-gradient(135deg, #8B0000, #C8102E); }
+        #backupBtn { background: linear-gradient(135deg, #D4AF37, #FFD700); color: #1a1a1a; }
+        #clearCacheBtn { background: linear-gradient(135deg, #B71C1C, #C62828); }
+        #helpBtn { background: linear-gradient(135deg, #FF8C00, #FFA500); }
 
-        /* Шапка */
-        .header-container { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; text-align: center; }
-        .coat-of-arms { flex: 0 0 140px; height: 170px; background: var(--surface); border-radius: 20px; padding: 10px; box-shadow: var(--shadow); border: 2px solid var(--victory-gold); }
-        .coat-of-arms img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
-        .header-content { flex: 1; min-width: 280px; }
-        .anniversary-text { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: var(--title); margin-bottom: 8px; }
-        .city-name { font-size: clamp(1.2rem, 3vw, 1.8rem); color: var(--title); margin-bottom: 12px; font-weight: 800; }
-        .subtitle { font-size: 1.1rem; color: var(--text2); }
+        /* ===================== ШАПКА (HERO) ===================== */
+        .hero {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+            padding: 50px 40px;
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow-lg);
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        @keyframes fadeInUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Кнопки */
-        .history-btn, .back-btn {
-            background: #E31E24; color: var(--victory-gold);
-            border: 2px solid var(--victory-gold); padding: 12px 24px;
-            border-radius: 999px; font-size: 1rem; font-weight: 700; cursor: pointer;
-            transition: all 0.2s; margin-bottom: 20px;
+        .hero::before {
+            content: '';
+            position: absolute; top: -50%; right: -10%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15), transparent 70%);
+            border-radius: 50%;
+            animation: pulse 6s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.8; } }
+
+        .coat-of-arms {
+            width: 150px; height: 180px;
+            background: linear-gradient(135deg, var(--surface-solid), var(--bg2));
+            border-radius: 24px;
+            padding: 12px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gold);
+            position: relative; z-index: 1;
+            transition: transform 0.4s;
+        }
+        .coat-of-arms:hover { transform: rotate(-3deg) scale(1.05); }
+        .coat-of-arms img { width: 100%; height: 100%; object-fit: contain; border-radius: 16px; }
+
+        .hero-content { position: relative; z-index: 1; }
+        .anniversary-text {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 700;
+            color: var(--dark-red);
+            margin-bottom: 10px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        body.dark .anniversary-text { color: var(--gold); }
+        .city-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(1.3rem, 3vw, 1.9rem);
+            color: var(--dark-red);
+            margin-bottom: 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        body.dark .city-name { color: var(--gold); }
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            max-width: 700px;
+        }
+
+        /* ===================== КНОПКИ ===================== */
+        .btn, .history-btn, .back-btn, .nav-btn, .tour-btn {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.25s ease;
             display: inline-flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(227,30,36,0.4);
+            border: none; text-decoration: none;
         }
-        .history-btn:hover, .back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(227,30,36,0.6); }
+        .history-btn, .back-btn {
+            background: linear-gradient(135deg, #C8102E, #8B0000);
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-size: 1rem;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.4);
+        }
+        .history-btn:hover, .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(200, 16, 46, 0.6);
+        }
+        .history-btn { margin-top: 20px; }
 
-        /* История */
+        /* ===================== ИСТОРИЯ ===================== */
         .history-panel {
-            background: var(--surface); border-radius: 20px; padding: 24px;
-            margin-bottom: 30px; border: 2px solid var(--victory-gold);
-            border-left: 6px solid var(--georgievsky-orange);
-            display: none; box-shadow: var(--shadow);
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 32px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-strong);
+            border-left: 6px solid var(--orange);
+            display: none;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.5s ease;
         }
         .history-panel.active { display: block; }
-        .history-panel h3 { font-size: 1.6rem; color: var(--title); margin-bottom: 20px; }
-        .history-item { margin-bottom: 14px; padding: 14px 16px; background: var(--surface2); border-radius: 12px; border-left: 4px solid var(--victory-gold); }
-        .history-item h4 { color: var(--title); margin-bottom: 6px; }
-        .history-item p { color: var(--text2); }
-        .history-timeline { position: relative; padding-left: 30px; margin-top: 20px; }
-        .history-timeline h4 { font-size: 1.2rem; color: var(--title); margin-bottom: 14px; }
-        .history-timeline::before { content: ""; position: absolute; left: 10px; top: 50px; bottom: 8px; width: 3px; background: repeating-linear-gradient(0deg, #FF6B00 0px, #FF6B00 6px, #1a1a1a 6px, #1a1a1a 12px); border-radius: 3px; }
-        .timeline-item { position: relative; margin-bottom: 12px; padding: 12px 14px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); transition: all 0.2s; }
-        .timeline-item::before { content: "★"; position: absolute; left: -28px; top: 14px; font-size: 14px; color: var(--victory-gold); }
-        .timeline-item:hover { transform: translateX(4px); border-color: var(--victory-gold); }
-        .timeline-year { background: var(--georgievsky-orange); color: white; font-weight: 800; padding: 4px 12px; border-radius: 999px; margin-right: 8px; font-size: 0.85rem; display: inline-block; }
+        .history-panel h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem; color: var(--dark-red);
+            margin-bottom: 24px; font-weight: 600;
+        }
+        body.dark .history-panel h3 { color: var(--gold); }
+        .history-item {
+            margin-bottom: 16px; padding: 18px 20px;
+            background: var(--surface-solid);
+            border-radius: 14px;
+            border-left: 4px solid var(--gold);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+        }
+        .history-item:hover { transform: translateX(6px); }
+        .history-item h4 { color: var(--dark-red); margin-bottom: 8px; font-size: 1.1rem; }
+        body.dark .history-item h4 { color: var(--gold); }
+        .history-item p { color: var(--text-muted); }
+
+        .history-timeline { position: relative; padding-left: 36px; margin-top: 28px; }
+        .history-timeline h4 { font-size: 1.3rem; color: var(--dark-red); margin-bottom: 18px; }
+        body.dark .history-timeline h4 { color: var(--gold); }
+        .history-timeline::before {
+            content: ""; position: absolute; left: 12px; top: 60px; bottom: 12px;
+            width: 3px;
+            background: repeating-linear-gradient(0deg, #FF6B00 0px, #FF6B00 8px, #1a1a1a 8px, #1a1a1a 16px);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 14px;
+            padding: 14px 18px;
+            background: var(--surface-solid);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .timeline-item::before {
+            content: "★"; position: absolute; left: -32px; top: 14px;
+            font-size: 16px; color: var(--gold);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        }
+        .timeline-item:hover { transform: translateX(6px); border-color: var(--gold); }
+        .timeline-year {
+            background: linear-gradient(135deg, var(--orange), #FF8C00);
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; padding: 4px 14px;
+            border-radius: 999px; margin-right: 10px;
+            font-size: 0.85rem; display: inline-block;
+        }
         .timeline-event { color: var(--text); }
 
-        /* Группы тем */
-        .theme-groups { display: flex; flex-direction: column; gap: 24px; margin-bottom: 40px; }
-        .theme-group { background: var(--surface); border-radius: 20px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); border-left: 4px solid var(--georgievsky-orange); }
-        .group-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid rgba(255,215,0,0.3); flex-wrap: wrap; }
-        .group-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: rgba(139,0,0,0.15); color: #8B0000; font-size: 1.3rem; }
-        .group-title { font-size: 1.5rem; color: var(--text); font-weight: 800; }
-        .group-subtitle { margin-left: auto; font-size: 0.9rem; color: var(--title); background: rgba(255,107,0,0.15); padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,215,0,0.3); }
-        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-        .theme-card { background: var(--surface2); border-radius: 16px; padding: 24px 16px; text-align: center; box-shadow: var(--shadow); border: 2px solid transparent; cursor: pointer; transition: all 0.2s; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .theme-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--victory-gold); }
-        .theme-icon { font-size: 2.2rem; color: #8B0000; margin-bottom: 12px; }
-        .theme-title { font-size: 1.2rem; color: var(--text); font-weight: 800; margin-bottom: 8px; }
-        .theme-desc { font-size: 0.9rem; color: var(--text2); }
+        /* ===================== ГРУППЫ ТЕМ ===================== */
+        .theme-groups { display: flex; flex-direction: column; gap: 28px; margin-bottom: 40px; }
+        .theme-group {
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--orange);
+            animation: fadeInUp 0.6s ease backwards;
+        }
+        .theme-group:nth-child(1) { animation-delay: 0.1s; }
+        .theme-group:nth-child(2) { animation-delay: 0.2s; }
+        .theme-group:nth-child(3) { animation-delay: 0.3s; }
+        .group-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px; padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .group-icon {
+            width: 52px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            color: var(--gold);
+            font-size: 1.4rem;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+        }
+        .group-title { font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: var(--text); font-weight: 600; }
+        .group-subtitle {
+            margin-left: auto;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.85rem; color: var(--dark-red);
+            background: rgba(255, 107, 0, 0.1);
+            padding: 6px 14px; border-radius: 999px;
+            border: 1px solid var(--border-strong);
+            font-weight: 500; letter-spacing: 0.5px;
+        }
+        body.dark .group-subtitle { color: var(--gold); }
+        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
 
-        /* Секции */
-        .content-section { display: none; margin-bottom: 40px; }
+        .theme-card {
+            background: var(--surface-solid);
+            border-radius: 18px; padding: 28px 18px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 200px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .theme-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .theme-card:hover::before { opacity: 1; }
+        .theme-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg), var(--shadow-gold);
+            border-color: var(--gold);
+        }
+        .theme-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 14px;
+            transition: transform 0.4s;
+        }
+        .theme-card:hover .theme-icon { transform: scale(1.2) rotate(5deg); }
+        .theme-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem; color: var(--text);
+            font-weight: 600; margin-bottom: 8px;
+        }
+        .theme-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* ===================== КОНТЕНТ-СЕКЦИИ ===================== */
+        .content-section { display: none; margin-bottom: 40px; animation: fadeInUp 0.4s ease; }
         .content-section.active { display: block; }
 
-        /* Контейнеры */
         .question-container, .photo-tour-container, .video-tour-container {
-            background: var(--surface); border-radius: 20px; padding: 24px;
-            border: 2px solid var(--victory-gold); box-shadow: var(--shadow);
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 32px;
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow);
         }
-        .section-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-        .section-title { font-size: 1.6rem; color: var(--title); }
-        .question-counter { background: var(--georgievsky-orange); border-radius: 999px; padding: 8px 16px; font-weight: 700; color: white; }
-        .question-content { display: flex; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
-        .question-image { flex: 0 0 250px; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 2px solid var(--victory-gold); }
-        .question-image img { width: 100%; height: 200px; object-fit: cover; }
-        .question-text { font-size: 1.3rem; color: var(--text); margin-bottom: 20px; padding: 16px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); }
+
+        .section-header {
+            display: flex; justify-content: space-between;
+            align-items: center; gap: 16px; margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .section-title { font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: var(--dark-red); font-weight: 600; }
+        body.dark .section-title { color: var(--gold); }
+        .question-counter {
+            background: linear-gradient(135deg, var(--orange), #FF8C00);
+            border-radius: 999px; padding: 10px 20px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+        }
+
+        /* Прогресс-бар */
+        .progress-bar {
+            width: 100%; height: 8px;
+            background: var(--bg2);
+            border-radius: 999px; overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--orange));
+            border-radius: 999px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .question-content { display: flex; gap: 28px; margin-bottom: 20px; flex-wrap: wrap; }
+        .question-image {
+            flex: 0 0 280px;
+            border-radius: 16px; overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--gold);
+            background: var(--bg2);
+            min-height: 200px;
+        }
+        .question-image img { width: 100%; height: 100%; min-height: 200px; object-fit: cover; display: block; }
+        .question-text {
+            font-size: 1.2rem; color: var(--text);
+            margin-bottom: 20px; padding: 18px;
+            background: var(--surface-solid);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            line-height: 1.6;
+        }
         .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .option { background: var(--surface2); padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; font-size: 1rem; color: var(--text); }
-        .option:hover { border-color: var(--georgievsky-orange); background: var(--hover); }
-        .option.selected { border-color: var(--victory-gold); background: rgba(255,215,0,0.2); }
-        .option.correct { border-color: #2e7d32; background: rgba(46,125,50,0.2); }
-        .option.incorrect { border-color: #c62828; background: rgba(198,40,40,0.2); }
-        .option-letter { width: 36px; height: 36px; background: #8B0000; color: var(--victory-gold); border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid var(--victory-gold); }
-        .answer-feedback { margin: 16px 0; padding: 12px 16px; border-radius: 12px; display: none; }
-        .answer-feedback.correct { background: rgba(46,125,50,0.2); border: 2px solid #2e7d32; color: #2e7d32; }
-        .answer-feedback.incorrect { background: rgba(198,40,40,0.2); border: 2px solid #c62828; color: #c62828; }
-        body.dark-theme .answer-feedback.correct { color: #66bb6a; }
-        body.dark-theme .answer-feedback.incorrect { color: #ef5350; }
-        .answer-feedback.show { display: block; }
 
-        /* Навигация */
-        .navigation, .tour-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 2px solid rgba(255,215,0,0.3); gap: 10px; flex-wrap: wrap; }
-        .nav-btn, .tour-btn { background: #8B0000; color: var(--victory-gold); border: 2px solid var(--victory-gold); padding: 10px 20px; border-radius: 999px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
-        .nav-btn:hover:not(:disabled), .tour-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
-        .nav-btn:disabled, .tour-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .check-answer-btn { background: var(--victory-gold); color: #1a1a1a; border-color: #1a1a1a; }
-        .submit-btn { background: var(--georgievsky-orange); color: white; border-color: var(--victory-gold); }
-
-        /* Видео */
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 16px; }
-        .video-wrapper iframe, .video-wrapper video { position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: 12px; }
-        .location-title { font-size: 1.5rem; color: var(--title); margin-bottom: 12px; }
-        .location-description { color: var(--text); margin-bottom: 16px; }
-
-        /* Футер */
-        footer { background: var(--surface); border-radius: 20px; padding: 30px 24px; text-align: center; margin-top: 40px; box-shadow: var(--shadow); border: 1px solid var(--border); position: relative; }
-        footer::before { content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 3px; background: repeating-linear-gradient(90deg, #FF6B00 0px, #FF6B00 8px, #1a1a1a 8px, #1a1a1a 16px); border-radius: 2px; }
-        .footer-title { font-size: 1.8rem; color: var(--title); margin: 8px 0 16px; font-weight: 900; }
-        footer p { font-size: 1rem; margin-bottom: 10px; color: var(--text2); }
-        .score-display { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 8px; }
-        .footer-author-btn { background: transparent; border: 1px solid var(--border); color: var(--text2); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; margin: 8px 0; display: inline-block; }
-        .footer-author-btn:hover { border-color: var(--victory-gold); color: var(--victory-gold); }
-
-        /* Модальные окна */
-        .edit-modal, .tour-map-modal, .modal {
-            display: none; position: fixed; inset: 0;
-            background: var(--modal-overlay); backdrop-filter: blur(8px);
-            z-index: 5000; align-items: center; justify-content: center;
-            padding: 20px; overflow-y: auto;
+        .option {
+            background: var(--surface-solid);
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 1rem; color: var(--text);
+            position: relative; overflow: hidden;
         }
-        .edit-modal.active, .tour-map-modal.active, .modal.active { display: flex; }
-        .edit-panel, .tour-map-container, .modal-content {
-            background: var(--surface); border-radius: 20px; padding: 24px;
-            max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto;
-            border: 2px solid var(--victory-gold); box-shadow: var(--shadow-lg);
+        .option::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
+            transition: width 0.3s;
+        }
+        .option:hover::before { width: 100%; }
+        .option:hover { border-color: var(--orange); transform: translateX(4px); }
+        .option.selected { border-color: var(--gold); background: rgba(255, 215, 0, 0.15); }
+        .option.correct { border-color: #2e7d32; background: rgba(46, 125, 50, 0.2); }
+        .option.incorrect { border-color: #c62828; background: rgba(198, 40, 40, 0.2); }
+        .option-letter {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            color: var(--gold);
+            border-radius: 50%;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            border: 2px solid var(--gold);
+            position: relative; z-index: 1;
+        }
+        .option-text { position: relative; z-index: 1; }
+
+        .answer-feedback {
+            margin: 16px 0; padding: 14px 18px;
+            border-radius: 12px; display: none;
+            animation: fadeInUp 0.3s ease;
+        }
+        .answer-feedback.show { display: block; }
+        .answer-feedback.correct { background: rgba(46, 125, 50, 0.2); border: 2px solid #2e7d32; color: #2e7d32; }
+        .answer-feedback.incorrect { background: rgba(198, 40, 40, 0.2); border: 2px solid #c62828; color: #c62828; }
+        body.dark .answer-feedback.correct { color: #66bb6a; }
+        body.dark .answer-feedback.incorrect { color: #ef5350; }
+
+        /* ===================== НАВИГАЦИЯ ===================== */
+        .navigation, .tour-navigation {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid var(--border);
+            gap: 10px; flex-wrap: wrap;
+        }
+        .nav-btn, .tour-btn {
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+        .nav-btn:hover:not(:disabled), .tour-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+        }
+        .nav-btn:disabled, .tour-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .check-answer-btn { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #1a1a1a; border-color: #1a1a1a; }
+        .submit-btn { background: linear-gradient(135deg, var(--orange), #FF8C00); color: white; border-color: var(--gold); }
+
+        /* ===================== ВИДЕО ===================== */
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0;
+            margin-bottom: 20px;
+            border-radius: 14px; overflow: hidden;
+            box-shadow: var(--shadow);
+            background: #000;
+        }
+        .video-wrapper iframe, .video-wrapper video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            border: none; border-radius: 12px;
+        }
+        .location-title { font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: var(--dark-red); margin-bottom: 14px; font-weight: 600; }
+        body.dark .location-title { color: var(--gold); }
+        .location-description { color: var(--text); margin-bottom: 18px; line-height: 1.7; }
+
+        /* ===================== ФУТЕР ===================== */
+        footer {
+            background: var(--surface);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 40px 28px;
+            text-align: center; margin-top: 50px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             position: relative;
         }
-        .modal-content { max-width: 450px; text-align: center; }
-        .edit-header, .map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-        .edit-title, .map-title { font-size: 1.4rem; color: var(--text); }
-        .close-edit, .close-map, .close-fullscreen, .close-modal {
-            background: #c62828; color: white; border: none;
-            width: 36px; height: 36px; border-radius: 50%;
-            font-size: 1.2rem; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            position: absolute; top: 12px; right: 16px;
+        footer::before {
+            content: ''; position: absolute; top: 0; left: 30px; right: 30px;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #FF6B00 0px, #FF6B00 10px, #1a1a1a 10px, #1a1a1a 20px);
+            border-radius: 2px;
         }
-        .close-edit:hover, .close-map:hover, .close-fullscreen:hover, .close-modal:hover { background: #b71c1c; transform: scale(1.1); }
+        .footer-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem; color: var(--dark-red);
+            margin: 12px 0 18px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        body.dark .footer-title { color: var(--gold); }
+        footer p { font-size: 1rem; margin-bottom: 10px; color: var(--text-muted); }
+        .score-display {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem; font-weight: 600;
+            color: var(--text); margin-top: 8px;
+            display: inline-block; margin: 8px 12px;
+        }
+        .score-display i { color: var(--gold); margin-right: 4px; }
+        .footer-author-btn {
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text-muted); padding: 8px 18px;
+            border-radius: 999px; cursor: pointer;
+            font-size: 0.9rem; transition: all 0.25s;
+            margin: 12px 0;
+            font-family: inherit;
+        }
+        .footer-author-btn:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
 
-        /* Формы */
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 700; color: var(--text); font-size: 0.9rem; }
-        .form-control, .file-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; }
-        .form-control:focus { outline: none; border-color: var(--georgievsky-orange); box-shadow: 0 0 0 3px rgba(255,107,0,0.2); }
-        textarea.form-control { resize: vertical; min-height: 80px; }
-        .edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-        .option-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; margin-bottom: 8px; padding: 8px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); }
-        .btn { padding: 10px 18px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
-        .btn:hover { filter: brightness(1.1); }
-        .btn-primary { background: #2563eb; color: white; }
-        .btn-success { background: #2e7d32; color: white; }
-        .btn-danger { background: #c62828; color: white; }
-        .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-        .btn-small { padding: 6px 10px; font-size: 0.8rem; }
-        .btn-group, .backup-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-        .edit-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .edit-tab { padding: 8px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--text); transition: all 0.2s; }
-        .edit-tab.active { background: #8B0000; color: var(--victory-gold); border-color: var(--victory-gold); }
-        .edit-section { display: none; }
-        .edit-section.active { display: block; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .backup-info { padding: 14px; background: rgba(46,125,50,0.1); border-radius: 12px; margin-bottom: 16px; color: var(--text2); }
-        .import-section { display: none; margin-top: 16px; padding: 16px; background: var(--surface2); border-radius: 12px; border: 1px dashed var(--border); }
-        .import-section.active { display: block; }
-        .status-message { padding: 10px 14px; border-radius: 10px; margin: 12px 0; display: none; }
-        .status-success { background: rgba(46,125,50,0.15); color: #2e7d32; border: 1px solid #2e7d32; }
-        .status-error { background: rgba(198,40,40,0.15); color: #c62828; border: 1px solid #c62828; }
+        /* ===================== МОДАЛЬНЫЕ ОКНА ===================== */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: var(--overlay);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 5000;
+            align-items: center; justify-content: center;
+            padding: 20px; overflow-y: auto;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Справка */
-        .help-content { font-size: 0.95rem; line-height: 1.6; max-height: 60vh; overflow-y: auto; }
-        .help-toc { background: var(--surface2); border-radius: 14px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .help-toc h3 { color: var(--title); margin-bottom: 10px; }
+        .modal-panel {
+            background: var(--surface-solid);
+            border-radius: 24px; padding: 28px;
+            max-width: 720px; width: 100%;
+            max-height: 88vh; overflow-y: auto;
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes modalIn { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        .modal-panel.modal-small { max-width: 480px; text-align: center; }
+
+        .modal-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-title { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: var(--text); font-weight: 600; }
+        .close-btn {
+            background: linear-gradient(135deg, #c62828, #b71c1c);
+            color: white; border: none;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer;
+            transition: all 0.25s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .close-btn:hover { transform: rotate(90deg) scale(1.1); }
+        .close-btn.close-floating {
+            position: absolute; top: 16px; right: 16px;
+        }
+
+        /* ===================== ФОРМЫ ===================== */
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; margin-bottom: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500; color: var(--text);
+            font-size: 0.9rem; letter-spacing: 0.3px;
+        }
+        .form-control {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.25s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--orange);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
+        }
+        textarea.form-control { resize: vertical; min-height: 90px; }
+        .edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .option-row {
+            display: grid; grid-template-columns: 1fr auto auto;
+            gap: 10px; align-items: center;
+            margin-bottom: 10px; padding: 10px;
+            background: var(--bg2);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .option-row input[type="text"] { padding: 8px 10px; font-size: 0.9rem; }
+        .option-row label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; white-space: nowrap; }
+
+        .btn {
+            padding: 12px 22px; border: none;
+            border-radius: 12px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500; font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.25s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; }
+        .btn-success { background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #c62828, #b71c1c); color: white; }
+        .btn-secondary { background: var(--bg2); color: var(--text); border: 1px solid var(--border); }
+        .btn-small { padding: 7px 12px; font-size: 0.8rem; border-radius: 8px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+        .edit-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; border-bottom: 2px solid var(--border); padding-bottom: 12px; }
+        .edit-tab {
+            padding: 10px 18px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500; font-size: 0.9rem;
+            color: var(--text);
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+        }
+        .edit-tab:hover { border-color: var(--gold); }
+        .edit-tab.active {
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            color: var(--gold);
+            border-color: var(--gold);
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+        }
+        .edit-section { display: none; animation: fadeIn 0.3s ease; }
+        .edit-section.active { display: block; }
+
+        .backup-info {
+            padding: 16px;
+            background: rgba(46, 125, 50, 0.1);
+            border-radius: 12px; margin-bottom: 20px;
+            color: var(--text);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        .import-section {
+            display: none; margin-top: 20px;
+            padding: 18px;
+            background: var(--bg2);
+            border-radius: 14px;
+            border: 1px dashed var(--border-strong);
+        }
+        .import-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 12px; margin: 14px 0;
+            display: none;
+            font-size: 0.95rem;
+        }
+        .status-message.show { display: block; animation: fadeIn 0.3s; }
+        .status-success { background: rgba(46, 125, 50, 0.15); color: #2e7d32; border: 1px solid #2e7d32; }
+        .status-error { background: rgba(198, 40, 40, 0.15); color: #c62828; border: 1px solid #c62828; }
+
+        /* ===================== СПРАВКА ===================== */
+        .help-content { font-size: 0.95rem; line-height: 1.7; max-height: 65vh; overflow-y: auto; padding-right: 10px; }
+        .help-content::-webkit-scrollbar { width: 8px; }
+        .help-content::-webkit-scrollbar-track { background: var(--bg2); border-radius: 4px; }
+        .help-content::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+        .help-toc {
+            background: var(--bg2);
+            border-radius: 14px; padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        .help-toc h3 { font-family: 'Oswald', sans-serif; color: var(--dark-red); margin-bottom: 14px; }
+        body.dark .help-toc h3 { color: var(--gold); }
         .help-toc ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
-        .help-toc li a { color: var(--text); text-decoration: none; padding: 6px 10px; border-radius: 8px; display: block; cursor: pointer; transition: all 0.2s; }
-        .help-toc li a:hover { background: var(--hover); color: var(--title); }
-        .help-section { background: var(--surface2); border-radius: 14px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); border-left: 4px solid var(--victory-gold); }
-        .help-section h3 { color: var(--title); margin-bottom: 8px; }
-        .faq-item { margin-bottom: 12px; padding: 10px; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); }
+        .help-toc li a {
+            color: var(--text); text-decoration: none;
+            padding: 8px 12px; border-radius: 8px;
+            display: block; cursor: pointer;
+            transition: all 0.25s;
+            font-size: 0.9rem;
+        }
+        .help-toc li a:hover { background: var(--hover); color: var(--dark-red); transform: translateX(4px); }
+        body.dark .help-toc li a:hover { color: var(--gold); }
+        .help-section {
+            background: var(--bg2);
+            border-radius: 14px; padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--gold);
+        }
+        .help-section h3 { font-family: 'Oswald', sans-serif; color: var(--dark-red); margin-bottom: 10px; font-size: 1.2rem; }
+        body.dark .help-section h3 { color: var(--gold); }
+        .faq-item { margin-bottom: 14px; padding: 12px 14px; background: var(--surface-solid); border-radius: 10px; border: 1px solid var(--border); }
+        .faq-item strong { color: var(--dark-red); }
+        body.dark .faq-item strong { color: var(--gold); }
 
-        /* Полноэкранное видео */
-        .fullscreen-video { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; align-items: center; justify-content: center; }
-        .fullscreen-video.active { display: flex; }
+        /* ===================== ПОЛНОЭКРАННОЕ ВИДЕО ===================== */
+        .fullscreen-video {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 6000;
+            align-items: center; justify-content: center;
+            padding: 30px;
+        }
+        .fullscreen-video.active { display: flex; animation: fadeIn 0.3s; }
         .fullscreen-video-content { width: 95%; height: 90%; position: relative; }
 
-        /* Соцсети */
-        .social-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
-        .soc-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.85rem; color: #fff; transition: all 0.2s; }
-        .soc-btn.vk { background: #0077FF; }
-        .soc-btn.github { background: #333; }
-        .soc-btn.twitch { background: #9146FF; }
-        .soc-btn:hover { transform: translateY(-2px); }
+        /* ===================== СОЦСЕТИ ===================== */
+        .social-grid { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+        .soc-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500; font-size: 0.9rem;
+            color: #fff;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+        }
+        .soc-btn.vk { background: linear-gradient(135deg, #0077FF, #005BBB); }
+        .soc-btn.github { background: linear-gradient(135deg, #333, #1a1a1a); }
+        .soc-btn.twitch { background: linear-gradient(135deg, #9146FF, #6441A5); }
+        .soc-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
 
-        /* Адаптив */
+        /* ===================== ТОСТЫ ===================== */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--surface-solid);
+            border: 1px solid var(--border-strong);
+            border-left: 5px solid var(--gold);
+            padding: 14px 24px;
+            border-radius: 14px;
+            box-shadow: var(--shadow-lg);
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500;
+            z-index: 7000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 90vw;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { border-left-color: #2e7d32; }
+        .toast.error { border-left-color: #c62828; }
+
+        /* ===================== АДАПТИВ ===================== */
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; text-align: center; padding: 36px 24px; gap: 24px; }
+            .coat-of-arms { margin: 0 auto; }
+        }
         @media (max-width: 768px) {
-            .controls-panel { position: static; flex-direction: row; flex-wrap: wrap; justify-content: center; margin: 10px auto 20px; padding: 10px; gap: 6px; }
-            .control-btn { padding: 8px 12px; font-size: 0.75rem; }
-            .header-container { flex-direction: column; gap: 16px; }
-            .coat-of-arms { width: 100px; height: 120px; }
+            .controls-panel {
+                position: static; flex-direction: row;
+                flex-wrap: wrap; justify-content: center;
+                margin: 0 auto 24px; padding: 12px; gap: 8px;
+            }
+            .control-btn { padding: 9px 14px; font-size: 0.78rem; }
+            .coat-of-arms { width: 110px; height: 130px; }
             .theme-grid, .options-grid { grid-template-columns: 1fr !important; }
             .question-content { flex-direction: column; }
             .question-image { flex: auto; width: 100%; }
             .nav-btn, .tour-btn { width: 100%; justify-content: center; }
-            .edit-panel, .tour-map-container, .modal-content { max-width: 95vw; padding: 16px; }
+            .modal-panel { max-width: 95vw; padding: 20px; }
             .option-row { grid-template-columns: 1fr; }
-            .edit-tabs { flex-wrap: nowrap; overflow-x: auto; }
+            .edit-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; }
+            .edit-tab { white-space: nowrap; }
+            .section-header { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 480px) {
+            body { font-size: 16px; }
+            .hero { padding: 24px 18px; }
+            .question-container, .photo-tour-container, .video-tour-container { padding: 20px; }
         }
     </style>
 </head>
 <body>
+    <!-- ===================== КАСТОМНЫЙ КУРСОР ===================== -->
+    <svg class="cursor-main" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2 L14.4 8.5 L21.5 9.3 L16.2 13.7 L17.8 20.5 L12 16.8 L6.2 20.5 L7.8 13.7 L2.5 9.3 L9.6 8.5 Z"
+              fill="#FFD700" stroke="#1a1a1a" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="2" fill="#C8102E"/>
+    </svg>
+    <div class="cursor-trail"></div>
+
     <div class="container">
-        <!-- Панель управления -->
+
+        <!-- ===================== ПАНЕЛЬ УПРАВЛЕНИЯ ===================== -->
         <div class="controls-panel">
             <button class="control-btn" id="themeToggle"><i class="fas fa-moon"></i> Тёмная тема</button>
             <button class="control-btn" id="editBtn"><i class="fas fa-edit"></i> Редактировать</button>
@@ -310,204 +878,34 @@
             <button class="control-btn" id="helpBtn"><i class="fas fa-question-circle"></i> Справка</button>
         </div>
 
-        <!-- Модальное окно бэкапа -->
-        <div class="edit-modal" id="backupModal">
-            <div class="edit-panel">
-                <div class="edit-header"><h2 class="edit-title"><i class="fas fa-download"></i> Сохранение данных</h2><button class="close-edit" onclick="closeBackupModal()">×</button></div>
-                <div class="backup-info"><p><strong>Сохранение данных:</strong> Вы можете скачать все ваши изменения в один JSON-файл.</p></div>
-                <div class="backup-actions">
-                    <button class="btn btn-primary" id="downloadBackupBtn"><i class="fas fa-file-download"></i> Скачать JSON</button>
-                    <button class="btn btn-success" id="showImportBtn"><i class="fas fa-file-upload"></i> Загрузить из файла</button>
-                </div>
-                <div class="import-section" id="importSection">
-                    <h4><i class="fas fa-upload"></i> Загрузка данных из файла</h4>
-                    <p style="margin-bottom:12px;">Выберите ранее сохраненный JSON-файл:</p>
-                    <input type="file" id="backupFileInput" class="form-control" accept=".json" style="margin-bottom:12px;">
-                    <div class="btn-group">
-                        <button class="btn btn-primary" id="restoreBtn" disabled><i class="fas fa-history"></i> Восстановить данные</button>
-                        <button class="btn btn-secondary" id="hideImportBtn"><i class="fas fa-times"></i> Отмена</button>
-                    </div>
-                    <div id="importStatus" class="status-message"></div>
-                </div>
+        <!-- ===================== HERO ===================== -->
+        <div class="hero">
+            <div class="coat-of-arms">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Coat_of_Arms_of_Naberezhnye_Chelny_%28Tatarstan%29.svg/1280px-Coat_of_Arms_of_Naberezhnye_Chelny_%28Tatarstan%29.svg.png"
+                     alt="Герб Набережных Челнов" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;\'>🛡️</div>'">
             </div>
-        </div>
-
-        <!-- Модальное окно редактирования -->
-        <div class="edit-modal" id="editModal">
-            <div class="edit-panel">
-                <div class="edit-header"><h2 class="edit-title"><i class="fas fa-cogs"></i> Редактирование контента</h2><button class="close-edit" onclick="closeEditModal()">×</button></div>
-                <div class="edit-tabs">
-                    <div class="edit-tab active" data-tab="themes">Темы</div>
-                    <div class="edit-tab" data-tab="questions">Вопросы</div>
-                    <div class="edit-tab" data-tab="locations">Локации</div>
-                    <div class="edit-tab" data-tab="videos">Видео</div>
-                    <div class="edit-tab" data-tab="history">История</div>
-                </div>
-                <div id="editStatus" class="status-message"></div>
-                
-                <!-- Вкладка Темы -->
-                <div class="edit-section active" id="themesTab">
-                    <div class="form-group"><label>Выберите тему:</label><select id="themeSelect" class="form-control"><option value="">-- Новая тема --</option></select></div>
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="editThemeName">Название темы *</label><input type="text" id="editThemeName" class="form-control"></div>
-                        <div class="form-group"><label for="editThemeType">Тип *</label><select id="editThemeType" class="form-control"><option value="quiz">Викторина</option><option value="photo">Фототур</option><option value="video">Видео тур</option></select></div>
-                    </div>
-                    <div class="form-group"><label for="editThemeIcon">Иконка (FontAwesome)</label><input type="text" id="editThemeIcon" class="form-control" placeholder="fas fa-landmark"></div>
-                    <div class="form-group"><label for="editThemeDesc">Описание</label><textarea id="editThemeDesc" class="form-control" rows="2"></textarea></div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="saveTheme()"><i class="fas fa-save"></i> Сохранить тему</button>
-                        <button class="btn btn-danger" onclick="deleteTheme()" id="deleteThemeBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
-                        <button class="btn btn-secondary" onclick="addNewTheme()"><i class="fas fa-plus"></i> Новая тема</button>
-                    </div>
-                </div>
-
-                <!-- Вкладка Вопросы -->
-                <div class="edit-section" id="questionsTab">
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="questionTheme">Тема *</label><select id="questionTheme" class="form-control"><option value="">-- Выберите --</option></select></div>
-                        <div class="form-group"><label for="questionSelect">Вопрос:</label><select id="questionSelect" class="form-control"><option value="">-- Новый вопрос --</option></select></div>
-                    </div>
-                    <div class="form-group"><label for="editQuestionText">Текст вопроса *</label><textarea id="editQuestionText" class="form-control" rows="2"></textarea></div>
-                    <div class="form-group"><label for="editQuestionImage">Ссылка на изображение</label><input type="text" id="editQuestionImage" class="form-control" placeholder="https://..."></div>
-                    <div class="form-group"><label for="editQuestionInfo">Информация после ответа *</label><textarea id="editQuestionInfo" class="form-control" rows="2"></textarea></div>
-                    <div class="form-group"><label>Варианты ответов:</label><div id="optionsContainer"></div><button class="btn btn-secondary btn-small" onclick="addOption()"><i class="fas fa-plus"></i> Добавить вариант</button></div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="saveQuestion()"><i class="fas fa-save"></i> Сохранить</button>
-                        <button class="btn btn-danger" onclick="deleteQuestion()" id="deleteQuestionBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
-                        <button class="btn btn-secondary" onclick="addNewQuestion()"><i class="fas fa-plus"></i> Новый</button>
-                    </div>
-                </div>
-
-                <!-- Вкладка Локации -->
-                <div class="edit-section" id="locationsTab">
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="locationTheme">Тема *</label><select id="locationTheme" class="form-control"><option value="">-- Выберите --</option></select></div>
-                        <div class="form-group"><label for="locationSelect">Локация:</label><select id="locationSelect" class="form-control"><option value="">-- Новая --</option></select></div>
-                    </div>
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="editLocationName">Название *</label><input type="text" id="editLocationName" class="form-control"></div>
-                        <div class="form-group"><label for="editLocationImage">Изображение *</label><input type="text" id="editLocationImage" class="form-control"></div>
-                    </div>
-                    <div class="form-group"><label for="editLocationDesc">Описание *</label><textarea id="editLocationDesc" class="form-control" rows="3"></textarea></div>
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="editLocationYear">Год</label><input type="text" id="editLocationYear" class="form-control"></div>
-                    </div>
-                    <div class="form-group"><label for="editLocationFunFact">Интересный факт</label><textarea id="editLocationFunFact" class="form-control" rows="2"></textarea></div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="saveLocation()"><i class="fas fa-save"></i> Сохранить</button>
-                        <button class="btn btn-danger" onclick="deleteLocation()" id="deleteLocationBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
-                        <button class="btn btn-secondary" onclick="addNewLocation()"><i class="fas fa-plus"></i> Новая</button>
-                    </div>
-                </div>
-
-                <!-- Вкладка Видео -->
-                <div class="edit-section" id="videosTab">
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="videoTheme">Тема *</label><select id="videoTheme" class="form-control"><option value="">-- Выберите --</option></select></div>
-                        <div class="form-group"><label for="videoSelect">Видео:</label><select id="videoSelect" class="form-control"><option value="">-- Новое --</option></select></div>
-                    </div>
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="editVideoTitle">Название *</label><input type="text" id="editVideoTitle" class="form-control"></div>
-                        <div class="form-group"><label for="editVideoUrl">Ссылка на видео *</label><input type="text" id="editVideoUrl" class="form-control" placeholder="https://www.youtube.com/embed/..."></div>
-                    </div>
-                    <div class="form-group"><label for="editVideoDescription">Описание *</label><textarea id="editVideoDescription" class="form-control" rows="3"></textarea></div>
-                    <div class="edit-grid">
-                        <div class="form-group"><label for="editVideoYear">Год</label><input type="text" id="editVideoYear" class="form-control"></div>
-                        <div class="form-group"><label for="editVideoDuration">Длительность (мин)</label><input type="number" id="editVideoDuration" class="form-control" min="1" value="5"></div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="saveVideo()"><i class="fas fa-save"></i> Сохранить</button>
-                        <button class="btn btn-danger" onclick="deleteVideo()" id="deleteVideoBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
-                        <button class="btn btn-secondary" onclick="addNewVideo()"><i class="fas fa-plus"></i> Новое</button>
-                    </div>
-                </div>
-
-                <!-- Вкладка История -->
-                <div class="edit-section" id="historyTab">
-                    <div class="form-group"><label for="editHistoryTitle">Заголовок истории</label><input type="text" id="editHistoryTitle" class="form-control" value="История Набережных Челнов"></div>
-                    <div class="form-group"><label>Исторические факты:</label><div id="historyFactsContainer"></div><button class="btn btn-secondary btn-small" onclick="addHistoryFact()"><i class="fas fa-plus"></i> Добавить факт</button></div>
-                    <div class="form-group"><label>Хронология:</label><div id="historyTimelineContainer"></div><button class="btn btn-secondary btn-small" onclick="addTimelineEvent()"><i class="fas fa-plus"></i> Добавить событие</button></div>
-                    <button class="btn btn-success" onclick="saveHistory()"><i class="fas fa-save"></i> Сохранить историю</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Модальное окно справки -->
-        <div class="edit-modal" id="helpModal">
-            <div class="edit-panel">
-                <div class="edit-header"><h2 class="edit-title"><i class="fas fa-question-circle"></i> Справка</h2><button class="close-edit" onclick="closeHelpModal()">×</button></div>
-                <div class="help-content">
-                    <div class="help-toc"><h3>Содержание</h3>
-                        <ul>
-                            <li><a onclick="scrollToHelp('main')">Главная</a></li>
-                            <li><a onclick="scrollToHelp('quiz')">Викторина</a></li>
-                            <li><a onclick="scrollToHelp('photo')">Фототур</a></li>
-                            <li><a onclick="scrollToHelp('video')">Видео тур</a></li>
-                            <li><a onclick="scrollToHelp('history')">История</a></li>
-                            <li><a onclick="scrollToHelp('edit')">Редактирование</a></li>
-                            <li><a onclick="scrollToHelp('backup')">Бэкап</a></li>
-                            <li><a onclick="scrollToHelp('faq')">FAQ</a></li>
-                        </ul>
-                    </div>
-                    <div class="help-section" id="help-main"><h3>Главная страница</h3><p>Выберите тему для изучения: викторину, фототур или видео тур.</p></div>
-                    <div class="help-section" id="help-quiz"><h3>Викторина</h3><p>Отвечайте на вопросы, получайте баллы. Лучший результат сохраняется.</p></div>
-                    <div class="help-section" id="help-photo"><h3>Фототур</h3><p>Изучайте локации города с фотографиями и описанием.</p></div>
-                    <div class="help-section" id="help-video"><h3>Видео тур</h3><p>Смотрите видео о городе. Поддерживаются YouTube, RUTUBE, MP4.</p></div>
-                    <div class="help-section" id="help-history"><h3>История города</h3><p>Нажмите кнопку "История города" для просмотра.</p></div>
-                    <div class="help-section" id="help-edit"><h3>Редактирование</h3><p>Кнопка "Редактировать" позволяет изменять темы, вопросы, локации и видео.</p></div>
-                    <div class="help-section" id="help-backup"><h3>Бэкап данных</h3><p>Скачайте JSON-файл с данными или восстановите из сохранённого.</p></div>
-                    <div class="help-section" id="help-faq">
-                        <h3>FAQ</h3>
-                        <div class="faq-item"><strong>Как сохранить прогресс?</strong><p>Прогресс сохраняется автоматически.</p></div>
-                        <div class="faq-item"><strong>Можно ли добавлять свои вопросы?</strong><p>Да, через кнопку "Редактировать".</p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Модальное окно автора -->
-        <div id="authorModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" onclick="closeAuthorModal()">×</button>
-                <h2 style="margin-bottom:16px;color:var(--title);">👨‍💻 Автор проекта</h2>
-                <p style="font-weight:700;color:var(--title);">© CayPlay, 2026</p>
-                <p style="color:var(--text2);margin:12px 0;">Образовательный проект о Набережных Челнах ко Дню Победы</p>
-                <div class="social-grid">
-                    <a href="https://vk.com/cayplay" target="_blank" class="soc-btn vk"><i class="fab fa-vk"></i> VK</a>
-                    <a href="https://github.com/CayPlayProjects" target="_blank" class="soc-btn github"><i class="fab fa-github"></i> GitHub</a>
-                    <a href="https://m.twitch.tv/cayplay_twitch" target="_blank" class="soc-btn twitch"><i class="fab fa-twitch"></i> Twitch</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Полноэкранное видео -->
-        <div class="fullscreen-video" id="fullscreenVideo">
-            <button class="close-fullscreen" onclick="exitFullscreenVideo()" style="position:absolute;top:20px;right:20px;z-index:1;">×</button>
-            <div class="fullscreen-video-content" id="fullscreenVideoContent"></div>
-        </div>
-
-        <!-- Шапка -->
-        <div class="header-container">
-            <div class="coat-of-arms"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Coat_of_Arms_of_Naberezhnye_Chelny_%28Tatarstan%29.svg/1280px-Coat_of_Arms_of_Naberezhnye_Chelny_%28Tatarstan%29.svg.png" alt="Герб Челнов"></div>
-            <div class="header-content">
+            <div class="hero-content">
                 <div class="anniversary-text">С Днём Победы!</div>
-                <div class="city-name">Набережные Челны - Город трудовой доблести</div>
-                <div class="subtitle">Вспомним героев, почтим ветеранов, изучим историю родного города</div>
+                <div class="city-name">Набережные Челны — Город трудовой доблести</div>
+                <div class="subtitle">Вспомним героев, почтим ветеранов, изучим историю родного города. 9 Мая 2026 — 81-я годовщина Великой Победы.</div>
             </div>
         </div>
 
-        <!-- История -->
+        <!-- ===================== ИСТОРИЯ ===================== -->
         <button class="history-btn" id="historyBtn"><i class="fas fa-book"></i> История города</button>
         <div class="history-panel" id="historyPanel">
-            <h3><span id="historyTitle">История Набережных Челнов</span></h3>
+            <h3 id="historyTitle">История Набережных Челнов</h3>
             <div id="historyContent"></div>
-            <div class="history-timeline"><h4>Хронология развития</h4><div id="timelineContent"></div></div>
+            <div class="history-timeline">
+                <h4>Хронология развития</h4>
+                <div id="timelineContent"></div>
+            </div>
         </div>
 
-        <!-- Темы -->
+        <!-- ===================== ТЕМЫ ===================== -->
         <div class="theme-groups" id="themeGroups"></div>
 
-        <!-- Секции -->
+        <!-- ===================== СЕКЦИИ КОНТЕНТА ===================== -->
         <div id="quizSection" class="content-section">
             <button class="back-btn" onclick="showThemes()"><i class="fas fa-arrow-left"></i> Назад к темам</button>
             <div class="question-container" id="quizContainer"></div>
@@ -521,26 +919,362 @@
             <div class="video-tour-container" id="videoTourContainer"></div>
         </div>
 
-        <!-- Футер -->
+        <!-- ===================== ФУТЕР ===================== -->
         <footer>
             <div class="footer-title">С Днём Великой Победы!</div>
             <p>9 Мая 2026 — 81 год со дня окончания Великой Отечественной войны</p>
             <p>Набережные Челны — Город трудовой доблести</p>
             <button id="authorBtn" class="footer-author-btn">© CayPlay</button>
             <p>Вечная память героям! 🕊️</p>
-            <div class="score-display"><i class="fas fa-star"></i> Лучший результат: <span id="bestScore">0</span> баллов</div>
-            <div class="score-display"><i class="fas fa-camera"></i> Локаций: <span id="locationsVisited">0</span></div>
-            <div class="score-display"><i class="fas fa-video"></i> Видео: <span id="videosWatched">0</span></div>
+            <div style="margin-top: 20px;">
+                <span class="score-display"><i class="fas fa-star"></i> Лучший результат: <span id="bestScore">0</span></span>
+                <span class="score-display"><i class="fas fa-camera"></i> Локаций: <span id="locationsVisited">0</span></span>
+                <span class="score-display"><i class="fas fa-video"></i> Видео: <span id="videosWatched">0</span></span>
+            </div>
         </footer>
     </div>
 
+    <!-- ===================== МОДАЛКИ ===================== -->
+    <!-- Бэкап -->
+    <div class="modal-overlay" id="backupModal">
+        <div class="modal-panel">
+            <button class="close-btn close-floating" onclick="closeBackupModal()">×</button>
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-download"></i> Сохранение данных</h2>
+            </div>
+            <div class="backup-info"><strong>Совет:</strong> скачайте JSON-файл, чтобы сохранить все ваши изменения локально.</div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="downloadBackupBtn"><i class="fas fa-file-download"></i> Скачать JSON</button>
+                <button class="btn btn-success" id="showImportBtn"><i class="fas fa-file-upload"></i> Загрузить из файла</button>
+            </div>
+            <div class="import-section" id="importSection">
+                <h4 style="margin-bottom: 12px;"><i class="fas fa-upload"></i> Загрузка данных из файла</h4>
+                <p style="margin-bottom: 14px;">Выберите ранее сохранённый JSON-файл:</p>
+                <input type="file" id="backupFileInput" class="form-control" accept=".json" style="margin-bottom: 14px;">
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="restoreBtn" disabled><i class="fas fa-history"></i> Восстановить</button>
+                    <button class="btn btn-secondary" id="hideImportBtn"><i class="fas fa-times"></i> Отмена</button>
+                </div>
+                <div id="importStatus" class="status-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Редактор -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-panel">
+            <button class="close-btn close-floating" onclick="closeEditModal()">×</button>
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-cogs"></i> Редактирование контента</h2>
+            </div>
+            <div class="edit-tabs">
+                <div class="edit-tab active" data-tab="themes">Темы</div>
+                <div class="edit-tab" data-tab="questions">Вопросы</div>
+                <div class="edit-tab" data-tab="locations">Локации</div>
+                <div class="edit-tab" data-tab="videos">Видео</div>
+                <div class="edit-tab" data-tab="history">История</div>
+            </div>
+            <div id="editStatus" class="status-message"></div>
+
+            <!-- Вкладка Темы -->
+            <div class="edit-section active" id="themesTab">
+                <div class="form-group">
+                    <label>Выберите тему для редактирования</label>
+                    <select id="themeSelect" class="form-control"><option value="">-- Новая тема --</option></select>
+                </div>
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="editThemeName">Название темы *</label>
+                        <input type="text" id="editThemeName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editThemeType">Тип *</label>
+                        <select id="editThemeType" class="form-control">
+                            <option value="quiz">Викторина</option>
+                            <option value="photo">Фототур</option>
+                            <option value="video">Видео тур</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editThemeIcon">Иконка (FontAwesome класс)</label>
+                    <input type="text" id="editThemeIcon" class="form-control" placeholder="fas fa-landmark">
+                </div>
+                <div class="form-group">
+                    <label for="editThemeDesc">Описание</label>
+                    <textarea id="editThemeDesc" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveTheme()"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="btn btn-danger" onclick="deleteTheme()" id="deleteThemeBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
+                    <button class="btn btn-secondary" onclick="addNewTheme()"><i class="fas fa-plus"></i> Новая тема</button>
+                </div>
+            </div>
+
+            <!-- Вкладка Вопросы -->
+            <div class="edit-section" id="questionsTab">
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="questionTheme">Тема *</label>
+                        <select id="questionTheme" class="form-control"><option value="">-- Выберите --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionSelect">Вопрос</label>
+                        <select id="questionSelect" class="form-control"><option value="">-- Новый вопрос --</option></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editQuestionText">Текст вопроса *</label>
+                    <textarea id="editQuestionText" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editQuestionImage">Ссылка на изображение</label>
+                    <input type="text" id="editQuestionImage" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="editQuestionInfo">Информация после ответа *</label>
+                    <textarea id="editQuestionInfo" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Варианты ответов (отметьте правильный)</label>
+                    <div id="optionsContainer"></div>
+                    <button class="btn btn-secondary btn-small" onclick="addOption()"><i class="fas fa-plus"></i> Добавить вариант</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveQuestion()"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="btn btn-danger" onclick="deleteQuestion()" id="deleteQuestionBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
+                    <button class="btn btn-secondary" onclick="addNewQuestion()"><i class="fas fa-plus"></i> Новый</button>
+                </div>
+            </div>
+
+            <!-- Вкладка Локации -->
+            <div class="edit-section" id="locationsTab">
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="locationTheme">Тема *</label>
+                        <select id="locationTheme" class="form-control"><option value="">-- Выберите --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="locationSelect">Локация</label>
+                        <select id="locationSelect" class="form-control"><option value="">-- Новая --</option></select>
+                    </div>
+                </div>
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="editLocationName">Название *</label>
+                        <input type="text" id="editLocationName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLocationImage">Изображение *</label>
+                        <input type="text" id="editLocationImage" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editLocationDesc">Описание *</label>
+                    <textarea id="editLocationDesc" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="editLocationYear">Год</label>
+                        <input type="text" id="editLocationYear" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editLocationFunFact">Интересный факт</label>
+                    <textarea id="editLocationFunFact" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveLocation()"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="btn btn-danger" onclick="deleteLocation()" id="deleteLocationBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
+                    <button class="btn btn-secondary" onclick="addNewLocation()"><i class="fas fa-plus"></i> Новая</button>
+                </div>
+            </div>
+
+            <!-- Вкладка Видео -->
+            <div class="edit-section" id="videosTab">
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="videoTheme">Тема *</label>
+                        <select id="videoTheme" class="form-control"><option value="">-- Выберите --</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="videoSelect">Видео</label>
+                        <select id="videoSelect" class="form-control"><option value="">-- Новое --</option></select>
+                    </div>
+                </div>
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="editVideoTitle">Название *</label>
+                        <input type="text" id="editVideoTitle" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editVideoUrl">Ссылка на видео *</label>
+                        <input type="text" id="editVideoUrl" class="form-control" placeholder="https://www.youtube.com/embed/...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editVideoDescription">Описание *</label>
+                    <textarea id="editVideoDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="edit-grid">
+                    <div class="form-group">
+                        <label for="editVideoYear">Год</label>
+                        <input type="text" id="editVideoYear" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editVideoDuration">Длительность (мин)</label>
+                        <input type="number" id="editVideoDuration" class="form-control" min="1" value="5">
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveVideo()"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="btn btn-danger" onclick="deleteVideo()" id="deleteVideoBtn" style="display:none;"><i class="fas fa-trash"></i> Удалить</button>
+                    <button class="btn btn-secondary" onclick="addNewVideo()"><i class="fas fa-plus"></i> Новое</button>
+                </div>
+            </div>
+
+            <!-- Вкладка История -->
+            <div class="edit-section" id="historyTab">
+                <div class="form-group">
+                    <label for="editHistoryTitle">Заголовок истории</label>
+                    <input type="text" id="editHistoryTitle" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Исторические факты</label>
+                    <div id="historyFactsContainer"></div>
+                    <button class="btn btn-secondary btn-small" onclick="addHistoryFact()"><i class="fas fa-plus"></i> Добавить факт</button>
+                </div>
+                <div class="form-group">
+                    <label>Хронология</label>
+                    <div id="historyTimelineContainer"></div>
+                    <button class="btn btn-secondary btn-small" onclick="addTimelineEvent()"><i class="fas fa-plus"></i> Добавить событие</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveHistory()"><i class="fas fa-save"></i> Сохранить историю</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Справка -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal-panel">
+            <button class="close-btn close-floating" onclick="closeHelpModal()">×</button>
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-question-circle"></i> Справка</h2>
+            </div>
+            <div class="help-content">
+                <div class="help-toc">
+                    <h3>Содержание</h3>
+                    <ul>
+                        <li><a onclick="scrollToHelp('main')">🏠 Главная</a></li>
+                        <li><a onclick="scrollToHelp('quiz')">🎯 Викторина</a></li>
+                        <li><a onclick="scrollToHelp('photo')">📸 Фототур</a></li>
+                        <li><a onclick="scrollToHelp('video')">🎬 Видео тур</a></li>
+                        <li><a onclick="scrollToHelp('history')">📚 История</a></li>
+                        <li><a onclick="scrollToHelp('edit')">✏️ Редактирование</a></li>
+                        <li><a onclick="scrollToHelp('backup')">💾 Бэкап</a></li>
+                        <li><a onclick="scrollToHelp('faq')">❓ FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="help-section" id="help-main">
+                    <h3>🏠 Главная страница</h3>
+                    <p>На главной странице расположены карточки трёх типов тем:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Викторина</strong> — проверьте свои знания о городе</li>
+                        <li><strong>Фототур</strong> — изучите красивейшие места Челнов</li>
+                        <li><strong>Видео тур</strong> — смотрите видео о городе</li>
+                    </ul>
+                    <p style="margin-top: 10px;">Кликните по любой карточке, чтобы начать.</p>
+                </div>
+                <div class="help-section" id="help-quiz">
+                    <h3>🎯 Викторина</h3>
+                    <p>Отвечайте на вопросы, выбирая один из вариантов. Нажмите «Проверить», чтобы увидеть правильный ответ и пояснение. За каждый правильный ответ начисляется 20 баллов. Лучший результат сохраняется и отображается в футере.</p>
+                </div>
+                <div class="help-section" id="help-photo">
+                    <h3>📸 Фототур</h3>
+                    <p>Листайте локации с фотографиями и описанием. У каждой локации есть название, год и интересный факт. Просмотренные локации автоматически считаются в футере.</p>
+                </div>
+                <div class="help-section" id="help-video">
+                    <h3>🎬 Видео тур</h3>
+                    <p>Смотрите видео о городе. Поддерживаются YouTube, RUTUBE, а также прямые ссылки на MP4-файлы. Можно развернуть видео на весь экран.</p>
+                </div>
+                <div class="help-section" id="help-history">
+                    <h3>📚 История города</h3>
+                    <p>Нажмите кнопку «История города» под шапкой, чтобы увидеть исторические факты и хронологию развития Набережных Челнов от основания до наших дней.</p>
+                </div>
+                <div class="help-section" id="help-edit">
+                    <h3>✏️ Редактирование</h3>
+                    <p>Кнопка «Редактировать» в правом верхнем углу открывает панель управления контентом. Доступно 5 вкладок:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Темы</strong> — создание, изменение и удаление тем</li>
+                        <li><strong>Вопросы</strong> — управление вопросами викторин</li>
+                        <li><strong>Локации</strong> — управление точками фототура</li>
+                        <li><strong>Видео</strong> — управление видеозаписями</li>
+                        <li><strong>История</strong> — редактирование исторических фактов и хронологии</li>
+                    </ul>
+                </div>
+                <div class="help-section" id="help-backup">
+                    <h3>💾 Бэкап данных</h3>
+                    <p>Кнопка «Сохранить данные» позволяет скачать все ваши изменения в один JSON-файл, который можно потом загрузить обратно. Это удобно для переноса между устройствами.</p>
+                </div>
+                <div class="help-section" id="help-faq">
+                    <h3>❓ Частые вопросы</h3>
+                    <div class="faq-item">
+                        <strong>Как сохранить прогресс?</strong>
+                        <p>Прогресс сохраняется автоматически в локальное хранилище браузера.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Можно ли добавлять свои вопросы?</strong>
+                        <p>Да, через кнопку «Редактировать» → вкладка «Вопросы».</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Какие форматы видео поддерживаются?</strong>
+                        <p>YouTube (встраивание), RUTUBE, а также прямые ссылки на .mp4 файлы.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Как сбросить все данные?</strong>
+                        <p>Нажмите «Очистить кэш» в панели управления.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Автор -->
+    <div class="modal-overlay" id="authorModal">
+        <div class="modal-panel modal-small">
+            <button class="close-btn close-floating" onclick="closeAuthorModal()">×</button>
+            <h2 style="margin-bottom: 16px; color: var(--dark-red); font-family: 'Oswald', sans-serif;">👨‍💻 Автор проекта</h2>
+            <p style="font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--dark-red);">© CayPlay, 2026</p>
+            <p style="color: var(--text-muted); margin: 12px 0;">Образовательный проект о Набережных Челнах ко Дню Победы</p>
+            <div class="social-grid">
+                <a href="https://vk.com/cayplay" target="_blank" rel="noopener" class="soc-btn vk"><i class="fab fa-vk"></i> VK</a>
+                <a href="https://github.com/CayPlayProjects" target="_blank" rel="noopener" class="soc-btn github"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://m.twitch.tv/cayplay_twitch" target="_blank" rel="noopener" class="soc-btn twitch"><i class="fab fa-twitch"></i> Twitch</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Полноэкранное видео -->
+    <div class="fullscreen-video" id="fullscreenVideo">
+        <button class="close-btn close-floating" onclick="exitFullscreenVideo()" style="z-index: 1;">×</button>
+        <div class="fullscreen-video-content" id="fullscreenVideoContent"></div>
+    </div>
+
+    <!-- Тост -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        // ============ ДАННЫЕ ============
+    (function() {
+        'use strict';
+
+        // ====================== ДАННЫЕ ======================
         const DEFAULT_DATA = {
             themes: [
                 { id: 'history_quiz', name: 'История Челнов', type: 'quiz', icon: 'fas fa-landmark', description: 'Проверьте знания об истории города' },
-                { id: 'war_quiz', name: 'Военная история', type: 'quiz', icon: 'fas fa-star', description: 'Челны в годы ВОВ' },
-                { id: 'city_photo', name: 'Фототур по Челнам', type: 'photo', icon: 'fas fa-camera', description: 'Красивейшие места' },
+                { id: 'war_quiz', name: 'Военная история', type: 'quiz', icon: 'fas fa-medal', description: 'Челны в годы Великой Отечественной войны' },
+                { id: 'city_photo', name: 'Фототур по Челнам', type: 'photo', icon: 'fas fa-camera', description: 'Красивейшие места города' },
                 { id: 'city_video', name: 'Видео о Челнах', type: 'video', icon: 'fas fa-video', description: 'Смотрите видео о городе' }
             ],
             quizzes: {
@@ -551,87 +1285,192 @@
                     { question: 'Когда Челны получили статус города?', image: '', info: 'Статус города присвоен 10 августа 1930 года.', options: [
                         { text: '1930', correct: true }, { text: '1926', correct: false }, { text: '1945', correct: false }, { text: '1950', correct: false }
                     ]},
-                    { question: 'Какое звание присвоено Челнам?', image: '', info: 'Звание "Город трудовой доблести" присвоено в 2021 году.', options: [
+                    { question: 'Какое звание присвоено Челнам в 2021 году?', image: '', info: 'Звание «Город трудовой доблести» присвоено за значительный вклад в Победу.', options: [
                         { text: 'Город трудовой доблести', correct: true }, { text: 'Город-герой', correct: false }, { text: 'Город воинской славы', correct: false }, { text: 'Наукоград', correct: false }
                     ]}
                 ]},
                 'war_quiz': { type: 'quiz', name: 'Военная история', questions: [
-                    { question: 'Как помогали жители Челнов фронту?', image: '', info: 'Трудились в тылу, обеспечивая фронт всем необходимым.', options: [
-                        { text: 'Трудились в тылу', correct: true }, { text: 'Только воевали', correct: false }, { text: 'Не участвовали', correct: false }, { text: 'Только финансами', correct: false }
+                    { question: 'Как жители Челнов помогали фронту в годы ВОВ?', image: '', info: 'Трудились в тылу, обеспечивая фронт всем необходимым: снарядами, продовольствием, техникой.', options: [
+                        { text: 'Самоотверженно трудились в тылу', correct: true }, { text: 'Только воевали на передовой', correct: false }, { text: 'Не участвовали в войне', correct: false }, { text: 'Помогали только финансово', correct: false }
+                    ]},
+                    { question: 'Какой завод был эвакуирован в Челны в годы войны?', image: '', info: 'В 1942 году в Челны был эвакуирован ряд предприятий, в том числе кузнечно-прессовый завод.', options: [
+                        { text: 'Кузнечно-прессовый завод', correct: true }, { text: 'Автогигант КАМАЗ', correct: false }, { text: 'Авиазавод', correct: false }, { text: 'Металлургический комбинат', correct: false }
                     ]}
                 ]}
             },
             photoTours: {
                 'city_photo': { type: 'photo', name: 'Фототур по Челнам', locations: [
-                    { name: 'Площадь Азатлык', image: '', description: 'Центральная площадь города, место проведения праздников и парадов.', year: '1970-е', funFact: 'В День Победы здесь проходит парад.' },
-                    { name: 'Парк Победы', image: '', description: 'Мемориальный парк, посвящённый героям ВОВ.', year: '1985', funFact: 'Здесь находится Вечный огонь.' }
+                    { name: 'Площадь Азатлык', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Naberezhnye_Chelny_-_Azatlyk_Square.jpg/1280px-Naberezhnye_Chelny_-_Azatlyk_Square.jpg', description: 'Центральная площадь города, место проведения праздников и парадов в День Победы.', year: '1970-е', funFact: 'В День Победы здесь проходит торжественный парад.' },
+                    { name: 'Парк Победы', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Naberezhnye_Chelny_Park_Pobedy.jpg/1280px-Naberezhnye_Chelny_Park_Pobedy.jpg', description: 'Мемориальный парк, посвящённый героям Великой Отечественной войны.', year: '1985', funFact: 'Здесь находится Вечный огонь и памятник воинам-челнинцам.' },
+                    { name: 'Набережная имени Тукая', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Naberezhnye_Chelny_embankment.jpg/1280px-Naberezhnye_Chelny_embankment.jpg', description: 'Живописная набережная вдоль реки Кама, любимое место отдыха горожан.', year: '1980-е', funFact: 'С набережной открывается великолепный вид на Каму.' }
                 ]}
             },
             videoTours: {
                 'city_video': { type: 'video', name: 'Видео о Челнах', videos: [
-                    { title: 'Челны с высоты', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', description: 'Красивый обзор города.', year: '2024', duration: 5 }
+                    { title: 'Набережные Челны — город трудовой доблести', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', description: 'Документальный фильм об истории и достижениях города.', year: '2024', duration: 5 }
                 ]}
             },
-            history: { title: 'История Набережных Челнов', facts: [
-                { title: 'Основание', content: 'Основаны в 1626 году как село Бережные Челны на реке Кама.' },
-                { title: 'Вклад в Победу', content: 'В годы ВОВ жители самоотверженно трудились в тылу.' },
-                { title: 'Город трудовой доблести', content: 'Звание присвоено за значительный вклад в достижение Победы.' }
-            ], timeline: [
-                { year: '1626', event: 'Основание села Бережные Челны' },
-                { year: '1930', event: 'Получение статуса города' },
-                { year: '1941-1945', event: 'Трудовой подвиг в годы ВОВ' },
-                { year: '1969', event: 'Начало строительства КАМАЗа' },
-                { year: '2021', event: 'Присвоение звания "Город трудовой доблести"' }
-            ]},
+            history: {
+                title: 'История Набережных Челнов',
+                facts: [
+                    { title: 'Основание', content: 'Основаны в 1626 году как село Бережные Челны на реке Кама.' },
+                    { title: 'Вклад в Победу', content: 'В годы ВОВ жители самоотверженно трудились в тылу, обеспечивая фронт всем необходимым.' },
+                    { title: 'Город трудовой доблести', content: 'Звание присвоено в 2021 году за значительный вклад в достижение Победы.' },
+                    { title: 'Современность', content: 'Сегодня Челны — второй по величине город Татарстана, крупный промышленный центр.' }
+                ],
+                timeline: [
+                    { year: '1626', event: 'Основание села Бережные Челны' },
+                    { year: '1930', event: 'Получение статуса города' },
+                    { year: '1941-1945', event: 'Трудовой подвиг жителей в годы ВОВ' },
+                    { year: '1969', event: 'Начало строительства КАМАЗа' },
+                    { year: '1976', event: 'Выпуск первого грузовика КАМАЗ' },
+                    { year: '2021', event: 'Присвоение звания «Город трудовой доблести»' }
+                ]
+            },
             visitedLocations: {},
             watchedVideos: {},
             bestScore: 0
         };
 
-        let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-        try { const s = localStorage.getItem('chelny_full_data'); if (s) appData = JSON.parse(s); } catch(e) {}
+        let appData;
+        try {
+            const saved = localStorage.getItem('chelny_full_data');
+            appData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+        } catch (e) {
+            appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
 
         // Состояние
         let currentTheme = null, currentQuestionIndex = 0, currentLocationIndex = 0, currentVideoIndex = 0;
-        let userAnswers = {}, quizScore = 0, answered = false, correctAnswer = false;
+        let userAnswers = {}, quizScore = 0, answered = false;
+        let optimizationMode = false;
 
-        // Сохранение
-        function saveAll() { localStorage.setItem('chelny_full_data', JSON.stringify(appData)); }
+        // ====================== УТИЛИТЫ ======================
+        function saveAll() {
+            try { localStorage.setItem('chelny_full_data', JSON.stringify(appData)); } catch(e) { console.error('Save error', e); }
+        }
+        function escapeHtml(t) {
+            if (t === null || t === undefined) return '';
+            const d = document.createElement('div');
+            d.textContent = String(t);
+            return d.innerHTML;
+        }
+        function fixImage(u) {
+            if (!u || !u.trim()) return '';
+            let f = u.trim();
+            if (!/^https?:\/\//i.test(f)) f = 'https://' + f;
+            return f;
+        }
+        function showToast(message, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = message;
+            t.className = 'toast show ' + type;
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+        function pluralize(n, forms) {
+            n = Math.abs(n) % 100;
+            const n1 = n % 10;
+            if (n > 10 && n < 20) return forms[2];
+            if (n1 > 1 && n1 < 5) return forms[1];
+            if (n1 === 1) return forms[0];
+            return forms[2];
+        }
+
         function updateScores() {
-            document.getElementById('bestScore').textContent = appData.bestScore;
-            let v = 0; Object.values(appData.visitedLocations).forEach(l => v += l.length);
+            document.getElementById('bestScore').textContent = appData.bestScore || 0;
+            let v = 0; Object.values(appData.visitedLocations || {}).forEach(arr => v += (arr || []).length);
             document.getElementById('locationsVisited').textContent = v;
-            let w = 0; Object.values(appData.watchedVideos).forEach(vd => w += vd.length);
+            let w = 0; Object.values(appData.watchedVideos || {}).forEach(arr => w += (arr || []).length);
             document.getElementById('videosWatched').textContent = w;
         }
 
-        function escapeHtml(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-        function fixImage(u) { if (!u || !u.trim()) return ''; let f = u.trim(); if (!f.startsWith('http')) f = 'https://' + f; return f; }
+        // ====================== КАСТОМНЫЙ КУРСОР ======================
+        const cursorMain = document.querySelector('.cursor-main');
+        const cursorTrail = document.querySelector('.cursor-trail');
+        let mouseX = 0, mouseY = 0, trailX = 0, trailY = 0;
+        let cursorVisible = false;
 
-        // Тема
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const btn = document.getElementById('themeToggle');
-            btn.innerHTML = document.body.classList.contains('dark-theme') ? '<i class="fas fa-sun"></i> Светлая тема' : '<i class="fas fa-moon"></i> Тёмная тема';
-            localStorage.setItem('chelny_dark', document.body.classList.contains('dark-theme'));
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            document.addEventListener('mousemove', e => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                if (!cursorVisible) {
+                    cursorMain.style.opacity = '1';
+                    cursorTrail.style.opacity = '1';
+                    cursorVisible = true;
+                }
+            });
+            document.addEventListener('mouseleave', () => {
+                cursorMain.style.opacity = '0';
+                cursorTrail.style.opacity = '0';
+                cursorVisible = false;
+            });
+            document.addEventListener('mousedown', () => cursorMain.classList.add('clicking'));
+            document.addEventListener('mouseup', () => cursorMain.classList.remove('clicking'));
+
+            const interactiveSelector = 'a, button, .theme-card, .option, .nav-btn, .tour-btn, .edit-tab, .control-btn, .timeline-item, .history-item, .help-toc li a, .close-btn, .soc-btn, .footer-author-btn, input, select, textarea';
+            document.addEventListener('mouseover', e => {
+                if (e.target.closest(interactiveSelector)) {
+                    cursorMain.classList.add('hover');
+                    cursorTrail.classList.add('hover');
+                }
+            });
+            document.addEventListener('mouseout', e => {
+                if (e.target.closest(interactiveSelector)) {
+                    cursorMain.classList.remove('hover');
+                    cursorTrail.classList.remove('hover');
+                }
+            });
+
+            function animateCursor() {
+                trailX += (mouseX - trailX) * 0.2;
+                trailY += (mouseY - trailY) * 0.2;
+                cursorMain.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+                cursorTrail.style.transform = `translate(${trailX}px, ${trailY}px) translate(-50%, -50%)`;
+                requestAnimationFrame(animateCursor);
+            }
+            cursorMain.style.opacity = '0';
+            cursorTrail.style.opacity = '0';
+            animateCursor();
         }
 
-        // История
+        // ====================== ТЕМА ======================
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            const isDark = document.body.classList.contains('dark');
+            btn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Светлая тема' : '<i class="fas fa-moon"></i> Тёмная тема';
+            localStorage.setItem('chelny_dark', isDark);
+        }
+
+        // ====================== ИСТОРИЯ ======================
         function toggleHistory() {
             const p = document.getElementById('historyPanel');
             p.classList.toggle('active');
-            document.getElementById('historyBtn').innerHTML = p.classList.contains('active') ? '<i class="fas fa-times"></i> Скрыть историю' : '<i class="fas fa-book"></i> История города';
+            const btn = document.getElementById('historyBtn');
+            btn.innerHTML = p.classList.contains('active') ? '<i class="fas fa-times"></i> Скрыть историю' : '<i class="fas fa-book"></i> История города';
         }
-
         function updateHistoryUI() {
             document.getElementById('historyTitle').textContent = appData.history.title;
-            const fc = document.getElementById('historyContent'); fc.innerHTML = '';
-            appData.history.facts.forEach(f => { const d = document.createElement('div'); d.className = 'history-item'; d.innerHTML = `<h4>${escapeHtml(f.title)}</h4><p>${escapeHtml(f.content)}</p>`; fc.appendChild(d); });
-            const tc = document.getElementById('timelineContent'); tc.innerHTML = '';
-            appData.history.timeline.forEach(e => { const d = document.createElement('div'); d.className = 'timeline-item'; d.innerHTML = `<span class="timeline-year">${escapeHtml(e.year)}</span> <span class="timeline-event">${escapeHtml(e.event)}</span>`; tc.appendChild(d); });
+            const fc = document.getElementById('historyContent');
+            fc.innerHTML = '';
+            (appData.history.facts || []).forEach(f => {
+                const d = document.createElement('div');
+                d.className = 'history-item';
+                d.innerHTML = `<h4>${escapeHtml(f.title)}</h4><p>${escapeHtml(f.content)}</p>`;
+                fc.appendChild(d);
+            });
+            const tc = document.getElementById('timelineContent');
+            tc.innerHTML = '';
+            (appData.history.timeline || []).forEach(e => {
+                const d = document.createElement('div');
+                d.className = 'timeline-item';
+                d.innerHTML = `<span class="timeline-year">${escapeHtml(e.year)}</span><span class="timeline-event">${escapeHtml(e.event)}</span>`;
+                tc.appendChild(d);
+            });
         }
 
-        // Темы
+        // ====================== ТЕМЫ ======================
         function showThemes() {
             document.getElementById('quizSection').classList.remove('active');
             document.getElementById('photoTourSection').classList.remove('active');
@@ -639,258 +1478,739 @@
             document.getElementById('themeGroups').style.display = 'flex';
             currentTheme = null;
             updateThemesUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
         function updateThemesUI() {
-            const c = document.getElementById('themeGroups'); c.innerHTML = '';
-            const types = [{ t: 'quiz', title: 'Пройдите викторину', icon: 'fas fa-question-circle' }, { t: 'photo', title: 'Отправьтесь в фототур', icon: 'fas fa-camera' }, { t: 'video', title: 'Смотрите видео туры', icon: 'fas fa-video' }];
+            const c = document.getElementById('themeGroups');
+            c.innerHTML = '';
+            const types = [
+                { t: 'quiz', title: 'Пройдите викторину', icon: 'fas fa-question-circle' },
+                { t: 'photo', title: 'Отправьтесь в фототур', icon: 'fas fa-camera' },
+                { t: 'video', title: 'Смотрите видео туры', icon: 'fas fa-video' }
+            ];
             types.forEach(({ t, title, icon }) => {
                 const themes = appData.themes.filter(th => th.type === t);
                 if (!themes.length) return;
-                const g = document.createElement('div'); g.className = 'theme-group';
-                g.innerHTML = `<div class="group-header"><div class="group-icon"><i class="${icon}"></i></div><div class="group-title">${title}</div><div class="group-subtitle">${themes.length} тем${themes.length===1?'а':themes.length<5?'ы':''}</div></div><div class="theme-grid">${themes.map(th => `<div class="theme-card" data-theme="${th.id}" data-type="${th.type}"><div class="theme-icon"><i class="${th.icon}"></i></div><div class="theme-title">${escapeHtml(th.name)}</div><div class="theme-desc">${escapeHtml(th.description||'')}</div></div>`).join('')}</div>`;
+                const g = document.createElement('div');
+                g.className = 'theme-group';
+                const word = pluralize(themes.length, ['тема', 'темы', 'тем']);
+                g.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-icon"><i class="${icon}"></i></div>
+                        <div class="group-title">${escapeHtml(title)}</div>
+                        <div class="group-subtitle">${themes.length} ${word}</div>
+                    </div>
+                    <div class="theme-grid">${themes.map(th => `
+                        <div class="theme-card" data-theme="${escapeHtml(th.id)}" data-type="${escapeHtml(th.type)}">
+                            <div class="theme-icon"><i class="${escapeHtml(th.icon)}"></i></div>
+                            <div class="theme-title">${escapeHtml(th.name)}</div>
+                            <div class="theme-desc">${escapeHtml(th.description || '')}</div>
+                        </div>
+                    `).join('')}</div>`;
                 c.appendChild(g);
             });
-            document.querySelectorAll('.theme-card').forEach(card => card.addEventListener('click', function() { startTheme(this.dataset.theme, this.dataset.type); }));
+            c.querySelectorAll('.theme-card').forEach(card => {
+                card.addEventListener('click', () => startTheme(card.dataset.theme, card.dataset.type));
+            });
         }
-
         function startTheme(id, type) {
             currentTheme = id;
             document.getElementById('themeGroups').style.display = 'none';
             document.getElementById('historyPanel').classList.remove('active');
             document.getElementById('historyBtn').innerHTML = '<i class="fas fa-book"></i> История города';
-            if (type === 'quiz') startQuiz(); else if (type === 'photo') startPhoto(); else if (type === 'video') startVideo();
+            if (type === 'quiz') startQuiz();
+            else if (type === 'photo') startPhoto();
+            else if (type === 'video') startVideo();
         }
 
-        // Викторина
+        // ====================== ВИКТОРИНА ======================
         function startQuiz() {
-            if (!appData.quizzes[currentTheme]?.questions.length) { alert('Нет вопросов'); showThemes(); return; }
-            currentQuestionIndex = 0; quizScore = 0; answered = false; userAnswers[currentTheme] = [];
-            document.getElementById('quizSection').classList.add('active'); loadQuestion();
+            if (!appData.quizzes[currentTheme] || !appData.quizzes[currentTheme].questions.length) {
+                showToast('В этой викторине пока нет вопросов', 'error');
+                showThemes();
+                return;
+            }
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            answered = false;
+            userAnswers[currentTheme] = [];
+            document.getElementById('quizSection').classList.add('active');
+            loadQuestion();
         }
-
         function loadQuestion() {
-            const t = appData.quizzes[currentTheme], q = t.questions[currentQuestionIndex];
+            const t = appData.quizzes[currentTheme];
+            const q = t.questions[currentQuestionIndex];
             const c = document.getElementById('quizContainer');
-            c.innerHTML = `<div class="section-header"><h2 class="section-title">${escapeHtml(t.name)}</h2><div class="question-counter">Вопрос ${currentQuestionIndex+1}/${t.questions.length}</div></div>
-            <div class="question-content">${q.image?`<div class="question-image"><img src="${fixImage(q.image)}" onerror="this.style.display='none'"></div>`:''}
-            <div style="flex:1;"><div class="question-text">${escapeHtml(q.question)}</div>
-            <div class="options-grid">${q.options.map((o,i)=>`<div class="option" data-idx="${i}" onclick="selectOption(${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><div>${escapeHtml(o.text)}</div></div>`).join('')}</div>
-            <div class="answer-feedback" id="feedback"></div>
-            <div class="navigation"><button class="nav-btn" onclick="prevQuestion()" ${currentQuestionIndex===0?'disabled':''}>← Назад</button>
-            <button class="nav-btn check-answer-btn" onclick="checkAnswer()" id="checkBtn">Проверить</button>
-            <button class="nav-btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Далее →</button>
-            ${currentQuestionIndex===t.questions.length-1?'<button class="nav-btn submit-btn" onclick="finishQuiz()" id="finishBtn" style="display:none;">Завершить</button>':''}</div></div></div>`;
+            const progress = ((currentQuestionIndex) / t.questions.length) * 100;
+            c.innerHTML = `
+                <div class="section-header">
+                    <h2 class="section-title">${escapeHtml(t.name)}</h2>
+                    <div class="question-counter">${currentQuestionIndex + 1} / ${t.questions.length}</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                <div class="question-content">
+                    ${q.image ? `<div class="question-image"><img src="${fixImage(q.image)}" alt="" onerror="this.parentElement.style.display='none'"></div>` : ''}
+                    <div style="flex:1; min-width: 250px;">
+                        <div class="question-text">${escapeHtml(q.question)}</div>
+                        <div class="options-grid">${q.options.map((o, i) => `
+                            <div class="option" data-idx="${i}">
+                                <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+                                <div class="option-text">${escapeHtml(o.text)}</div>
+                            </div>
+                        `).join('')}</div>
+                        <div class="answer-feedback" id="feedback"></div>
+                        <div class="navigation">
+                            <button class="nav-btn" id="prevBtn" ${currentQuestionIndex === 0 ? 'disabled' : ''}><i class="fas fa-arrow-left"></i> Назад</button>
+                            <button class="nav-btn check-answer-btn" id="checkBtn">Проверить</button>
+                            <button class="nav-btn" id="nextBtn" style="display:none;">Далее <i class="fas fa-arrow-right"></i></button>
+                            ${currentQuestionIndex === t.questions.length - 1 ? '<button class="nav-btn submit-btn" id="finishBtn" style="display:none;"><i class="fas fa-trophy"></i> Завершить</button>' : ''}
+                        </div>
+                    </div>
+                </div>`;
+            c.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => selectOption(parseInt(opt.dataset.idx)));
+            });
+            document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) prevBtn.addEventListener('click', prevQuestion);
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
+            const finishBtn = document.getElementById('finishBtn');
+            if (finishBtn) finishBtn.addEventListener('click', finishQuiz);
         }
-
         function selectOption(i) {
             if (answered) return;
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
             document.querySelectorAll('.option')[i].classList.add('selected');
             userAnswers[currentTheme][currentQuestionIndex] = i;
         }
-
         function checkAnswer() {
-            const ua = userAnswers[currentTheme]?.[currentQuestionIndex];
-            if (ua === undefined) { alert('Выберите ответ!'); return; }
+            const ua = userAnswers[currentTheme] && userAnswers[currentTheme][currentQuestionIndex];
+            if (ua === undefined) { showToast('Выберите ответ!', 'error'); return; }
             answered = true;
             const q = appData.quizzes[currentTheme].questions[currentQuestionIndex];
-            correctAnswer = q.options[ua].correct;
+            const isCorrect = q.options[ua].correct;
             document.querySelectorAll('.option').forEach((o, i) => {
                 if (q.options[i].correct) o.classList.add('correct');
-                if (i === ua && !correctAnswer) o.classList.add('incorrect');
+                if (i === ua && !isCorrect) o.classList.add('incorrect');
             });
             const fb = document.getElementById('feedback');
-            fb.className = `answer-feedback ${correctAnswer?'correct':'incorrect'} show`;
-            fb.innerHTML = `<strong>${correctAnswer?'✅ Правильно!':'❌ Неправильно!'}</strong> ${escapeHtml(q.info||'')}`;
-            if (correctAnswer) quizScore += 20;
+            fb.className = `answer-feedback ${isCorrect ? 'correct' : 'incorrect'} show`;
+            fb.innerHTML = `<strong>${isCorrect ? '✅ Правильно!' : '❌ Неправильно!'}</strong> ${escapeHtml(q.info || '')}`;
+            if (isCorrect) quizScore += 20;
             document.getElementById('checkBtn').style.display = 'none';
-            if (currentQuestionIndex === appData.quizzes[currentTheme].questions.length-1) document.getElementById('finishBtn').style.display = 'flex';
-            else document.getElementById('nextBtn').style.display = 'flex';
+            const nextBtn = document.getElementById('nextBtn');
+            const finishBtn = document.getElementById('finishBtn');
+            if (finishBtn) finishBtn.style.display = 'inline-flex';
+            else if (nextBtn) nextBtn.style.display = 'inline-flex';
         }
-
-        function nextQuestion() { if (currentQuestionIndex < appData.quizzes[currentTheme].questions.length-1) { currentQuestionIndex++; loadQuestion(); } }
-        function prevQuestion() { if (currentQuestionIndex > 0) { currentQuestionIndex--; loadQuestion(); } }
-
+        function nextQuestion() {
+            if (currentQuestionIndex < appData.quizzes[currentTheme].questions.length - 1) {
+                currentQuestionIndex++;
+                answered = false;
+                loadQuestion();
+            }
+        }
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                answered = false;
+                loadQuestion();
+            }
+        }
         function finishQuiz() {
-            const max = appData.quizzes[currentTheme].questions.length*20;
-            if (quizScore > appData.bestScore) { appData.bestScore = quizScore; saveAll(); updateScores(); }
-            document.getElementById('quizContainer').innerHTML = `<div style="text-align:center;padding:40px;"><h2>🎖️ Викторина завершена!</h2><div style="font-size:4rem;color:var(--victory-gold);margin:20px 0;">${quizScore}/${max}</div><button class="nav-btn" onclick="restartQuiz()">Ещё раз</button> <button class="nav-btn submit-btn" onclick="showThemes()">На главную</button></div>`;
+            const max = appData.quizzes[currentTheme].questions.length * 20;
+            if (quizScore > (appData.bestScore || 0)) {
+                appData.bestScore = quizScore;
+                saveAll();
+                updateScores();
+                showToast(`🏆 Новый рекорд: ${quizScore} баллов!`, 'success');
+            }
+            document.getElementById('quizContainer').innerHTML = `
+                <div style="text-align:center; padding: 40px 20px;">
+                    <h2 style="font-family: 'Oswald', sans-serif; color: var(--dark-red); margin-bottom: 20px;">🎖️ Викторина завершена!</h2>
+                    <div style="font-size: 4rem; color: var(--gold); margin: 20px 0; font-family: 'Oswald', sans-serif; font-weight: 700;">${quizScore} / ${max}</div>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">${quizScore === max ? 'Идеальный результат! Вы настоящий знаток!' : 'Отличная работа!'}</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="nav-btn" id="restartQuizBtn"><i class="fas fa-redo"></i> Ещё раз</button>
+                        <button class="nav-btn submit-btn" id="toHomeBtn"><i class="fas fa-home"></i> На главную</button>
+                    </div>
+                </div>`;
+            document.getElementById('restartQuizBtn').addEventListener('click', restartQuiz);
+            document.getElementById('toHomeBtn').addEventListener('click', showThemes);
         }
         function restartQuiz() { startQuiz(); }
 
-        // Фототур
+        // ====================== ФОТОТУР ======================
         function startPhoto() {
-            if (!appData.photoTours[currentTheme]?.locations.length) { alert('Нет локаций'); showThemes(); return; }
+            if (!appData.photoTours[currentTheme] || !appData.photoTours[currentTheme].locations.length) {
+                showToast('В этом фототуре пока нет локаций', 'error');
+                showThemes();
+                return;
+            }
             currentLocationIndex = 0;
-            document.getElementById('photoTourSection').classList.add('active'); loadPhoto();
+            document.getElementById('photoTourSection').classList.add('active');
+            loadPhoto();
         }
-
         function loadPhoto() {
-            const t = appData.photoTours[currentTheme], l = t.locations[currentLocationIndex];
-            document.getElementById('photoTourContainer').innerHTML = `<div class="section-header"><h2 class="section-title">${escapeHtml(t.name)}</h2><div class="question-counter">${currentLocationIndex+1}/${t.locations.length}</div></div>
-            <div class="question-content">${l.image?`<div class="question-image"><img src="${fixImage(l.image)}" style="height:250px;object-fit:cover;" onerror="this.style.display='none'"></div>`:''}
-            <div><h3 class="location-title">${escapeHtml(l.name)}</h3><div class="location-description">${escapeHtml(l.description)}</div>${l.year?`<p><strong>Год:</strong> ${escapeHtml(l.year)}</p>`:''}${l.funFact?`<p style="margin-top:8px;padding:10px;background:var(--surface2);border-radius:10px;">💡 ${escapeHtml(l.funFact)}</p>`:''}</div></div>
-            <div class="navigation"><button class="nav-btn" onclick="prevLocation()" ${currentLocationIndex===0?'disabled':''}>← Назад</button><button class="nav-btn submit-btn" onclick="nextLocation()">${currentLocationIndex===t.locations.length-1?'Завершить':'Далее →'}</button></div>`;
+            const t = appData.photoTours[currentTheme];
+            const l = t.locations[currentLocationIndex];
+            const progress = ((currentLocationIndex) / t.locations.length) * 100;
+            document.getElementById('photoTourContainer').innerHTML = `
+                <div class="section-header">
+                    <h2 class="section-title">${escapeHtml(t.name)}</h2>
+                    <div class="question-counter">${currentLocationIndex + 1} / ${t.locations.length}</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                <div class="question-content">
+                    ${l.image ? `<div class="question-image"><img src="${fixImage(l.image)}" alt="${escapeHtml(l.name)}" style="height: 280px; object-fit: cover;" onerror="this.parentElement.innerHTML='<div style=\\'height:280px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--bg2);\\'>🏛️</div>'"></div>` : ''}
+                    <div style="flex:1; min-width: 250px;">
+                        <h3 class="location-title">${escapeHtml(l.name)}</h3>
+                        <p class="location-description">${escapeHtml(l.description)}</p>
+                        ${l.year ? `<p style="margin-top: 12px;"><strong style="color: var(--dark-red);">Год:</strong> ${escapeHtml(l.year)}</p>` : ''}
+                        ${l.funFact ? `<div style="margin-top: 14px; padding: 14px; background: var(--bg2); border-radius: 12px; border-left: 4px solid var(--gold);">💡 <strong>Интересный факт:</strong> ${escapeHtml(l.funFact)}</div>` : ''}
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button class="nav-btn" id="prevLocBtn" ${currentLocationIndex === 0 ? 'disabled' : ''}><i class="fas fa-arrow-left"></i> Назад</button>
+                    <button class="nav-btn submit-btn" id="nextLocBtn">${currentLocationIndex === t.locations.length - 1 ? '<i class="fas fa-trophy"></i> Завершить' : 'Далее <i class="fas fa-arrow-right"></i>'}</button>
+                </div>`;
+            document.getElementById('prevLocBtn').addEventListener('click', prevLocation);
+            document.getElementById('nextLocBtn').addEventListener('click', nextLocation);
             if (!appData.visitedLocations[currentTheme]) appData.visitedLocations[currentTheme] = [];
-            if (!appData.visitedLocations[currentTheme].includes(currentLocationIndex)) { appData.visitedLocations[currentTheme].push(currentLocationIndex); saveAll(); updateScores(); }
+            if (!appData.visitedLocations[currentTheme].includes(currentLocationIndex)) {
+                appData.visitedLocations[currentTheme].push(currentLocationIndex);
+                saveAll(); updateScores();
+            }
         }
-
         function prevLocation() { if (currentLocationIndex > 0) { currentLocationIndex--; loadPhoto(); } }
-        function nextLocation() { if (currentLocationIndex < appData.photoTours[currentTheme].locations.length-1) { currentLocationIndex++; loadPhoto(); } else { document.getElementById('photoTourContainer').innerHTML = '<div style="text-align:center;padding:40px;"><h2>🎖️ Фототур завершён!</h2><button class="nav-btn" onclick="showThemes()">На главную</button></div>'; } }
+        function nextLocation() {
+            const t = appData.photoTours[currentTheme];
+            if (currentLocationIndex < t.locations.length - 1) { currentLocationIndex++; loadPhoto(); }
+            else {
+                document.getElementById('photoTourContainer').innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px;">
+                        <h2 style="font-family: 'Oswald', sans-serif; color: var(--dark-red);">🎖️ Фототур завершён!</h2>
+                        <p style="color: var(--text-muted); margin: 20px 0;">Вы посетили все локации маршрута.</p>
+                        <button class="nav-btn submit-btn" id="finishPhotoBtn"><i class="fas fa-home"></i> На главную</button>
+                    </div>`;
+                document.getElementById('finishPhotoBtn').addEventListener('click', showThemes);
+            }
+        }
 
-        // Видеотур
+        // ====================== ВИДЕОТУР ======================
         function startVideo() {
-            if (!appData.videoTours[currentTheme]?.videos.length) { alert('Нет видео'); showThemes(); return; }
+            if (!appData.videoTours[currentTheme] || !appData.videoTours[currentTheme].videos.length) {
+                showToast('В этом видеотуре пока нет видео', 'error');
+                showThemes();
+                return;
+            }
             currentVideoIndex = 0;
-            document.getElementById('videoTourSection').classList.add('active'); loadVideo();
+            document.getElementById('videoTourSection').classList.add('active');
+            loadVideo();
         }
-
         function getVideoEmbed(url) {
-            if (!url) return '<p>Видео не загружено</p>';
+            if (!url || !url.trim()) return '<p>Видео не загружено</p>';
             let u = url.trim();
-            if (u.includes('youtube.com/watch?v=')) { const id = u.split('v=')[1]?.split('&')[0]; if (id) u = `https://www.youtube.com/embed/${id}`; }
-            else if (u.includes('youtu.be/')) { const id = u.split('youtu.be/')[1]?.split('?')[0]; if (id) u = `https://www.youtube.com/embed/${id}`; }
-            if (u.includes('youtube.com/embed/') || u.includes('rutube.ru/play/embed/')) return `<iframe src="${u}" allowfullscreen style="width:100%;height:100%;position:absolute;top:0;left:0;border:none;"></iframe>`;
-            if (u.endsWith('.mp4')) return `<video controls style="width:100%;height:100%;position:absolute;top:0;left:0;"><source src="${u}" type="video/mp4"></video>`;
-            return `<p>Не удалось загрузить: <a href="${u}" target="_blank">открыть</a></p>`;
+            // YouTube watch
+            const ytWatch = u.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/watch\?.*&v=)([a-zA-Z0-9_-]{11})/);
+            if (ytWatch) u = `https://www.youtube.com/embed/${ytWatch[1]}`;
+            // YouTube short
+            else if (u.includes('youtu.be/')) {
+                const id = u.split('youtu.be/')[1].split('?')[0].split('&')[0];
+                if (id) u = `https://www.youtube.com/embed/${id}`;
+            }
+            // RUTUBE
+            else if (u.includes('rutube.ru/video/') && !u.includes('embed')) {
+                u = u.replace('rutube.ru/video/', 'rutube.ru/play/embed/');
+            }
+            if (/youtube\.com\/embed\//.test(u) || /rutube\.ru\/play\/embed\//.test(u) || /vk\.com\/video_ext\.php/.test(u)) {
+                return `<iframe src="${escapeHtml(u)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" loading="lazy"></iframe>`;
+            }
+            if (/\.mp4(\?.*)?$/i.test(u)) {
+                return `<video controls preload="metadata"><source src="${escapeHtml(u)}" type="video/mp4">Ваш браузер не поддерживает видео.</video>`;
+            }
+            return `<p>Неподдерживаемый формат. <a href="${escapeHtml(u)}" target="_blank" rel="noopener">Открыть в новой вкладке</a></p>`;
         }
-
         function loadVideo() {
-            const t = appData.videoTours[currentTheme], v = t.videos[currentVideoIndex];
-            document.getElementById('videoTourContainer').innerHTML = `<div class="section-header"><h2 class="section-title">${escapeHtml(t.name)}</h2><div class="question-counter">${currentVideoIndex+1}/${t.videos.length}</div></div>
-            <div class="video-wrapper">${getVideoEmbed(v.url)}</div>
-            <h3 class="location-title">${escapeHtml(v.title)}</h3><p class="location-description">${escapeHtml(v.description)}</p>${v.year?`<p><strong>Год:</strong> ${escapeHtml(v.year)}</p>`:''}
-            <div class="navigation"><button class="nav-btn" onclick="prevVideo()" ${currentVideoIndex===0?'disabled':''}>← Назад</button>
-            <button class="nav-btn" onclick="openFullscreen('${v.url.replace(/'/g,"\\'")}')">⛶ Полный экран</button>
-            <button class="nav-btn submit-btn" onclick="nextVideo()">${currentVideoIndex===t.videos.length-1?'Завершить':'Далее →'}</button></div>`;
+            const t = appData.videoTours[currentTheme];
+            const v = t.videos[currentVideoIndex];
+            const progress = ((currentVideoIndex) / t.videos.length) * 100;
+            document.getElementById('videoTourContainer').innerHTML = `
+                <div class="section-header">
+                    <h2 class="section-title">${escapeHtml(t.name)}</h2>
+                    <div class="question-counter">${currentVideoIndex + 1} / ${t.videos.length}</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                <div class="video-wrapper">${getVideoEmbed(v.url)}</div>
+                <h3 class="location-title">${escapeHtml(v.title)}</h3>
+                <p class="location-description">${escapeHtml(v.description)}</p>
+                ${v.year ? `<p><strong style="color: var(--dark-red);">Год:</strong> ${escapeHtml(v.year)}${v.duration ? ' • <strong style="color: var(--dark-red);">Длительность:</strong> ' + escapeHtml(String(v.duration)) + ' мин' : ''}</p>` : ''}
+                <div class="navigation">
+                    <button class="nav-btn" id="prevVidBtn" ${currentVideoIndex === 0 ? 'disabled' : ''}><i class="fas fa-arrow-left"></i> Назад</button>
+                    <button class="nav-btn check-answer-btn" id="fsBtn"><i class="fas fa-expand"></i> Полный экран</button>
+                    <button class="nav-btn submit-btn" id="nextVidBtn">${currentVideoIndex === t.videos.length - 1 ? '<i class="fas fa-trophy"></i> Завершить' : 'Далее <i class="fas fa-arrow-right"></i>'}</button>
+                </div>`;
+            document.getElementById('prevVidBtn').addEventListener('click', prevVideo);
+            document.getElementById('nextVidBtn').addEventListener('click', nextVideo);
+            document.getElementById('fsBtn').addEventListener('click', () => openFullscreen(v.url));
             if (!appData.watchedVideos[currentTheme]) appData.watchedVideos[currentTheme] = [];
-            if (!appData.watchedVideos[currentTheme].includes(currentVideoIndex)) { appData.watchedVideos[currentTheme].push(currentVideoIndex); saveAll(); updateScores(); }
+            if (!appData.watchedVideos[currentTheme].includes(currentVideoIndex)) {
+                appData.watchedVideos[currentTheme].push(currentVideoIndex);
+                saveAll(); updateScores();
+            }
         }
-
         function prevVideo() { if (currentVideoIndex > 0) { currentVideoIndex--; loadVideo(); } }
-        function nextVideo() { if (currentVideoIndex < appData.videoTours[currentTheme].videos.length-1) { currentVideoIndex++; loadVideo(); } else { document.getElementById('videoTourContainer').innerHTML = '<div style="text-align:center;padding:40px;"><h2>🎖️ Видео тур завершён!</h2><button class="nav-btn" onclick="showThemes()">На главную</button></div>'; } }
-        function openFullscreen(url) { document.getElementById('fullscreenVideoContent').innerHTML = `<div class="video-wrapper">${getVideoEmbed(url)}</div>`; document.getElementById('fullscreenVideo').classList.add('active'); }
+        function nextVideo() {
+            const t = appData.videoTours[currentTheme];
+            if (currentVideoIndex < t.videos.length - 1) { currentVideoIndex++; loadVideo(); }
+            else {
+                document.getElementById('videoTourContainer').innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px;">
+                        <h2 style="font-family: 'Oswald', sans-serif; color: var(--dark-red);">🎖️ Видео тур завершён!</h2>
+                        <p style="color: var(--text-muted); margin: 20px 0;">Спасибо за просмотр!</p>
+                        <button class="nav-btn submit-btn" id="finishVidBtn"><i class="fas fa-home"></i> На главную</button>
+                    </div>`;
+                document.getElementById('finishVidBtn').addEventListener('click', showThemes);
+            }
+        }
+        function openFullscreen(url) {
+            document.getElementById('fullscreenVideoContent').innerHTML = `<div class="video-wrapper">${getVideoEmbed(url)}</div>`;
+            document.getElementById('fullscreenVideo').classList.add('active');
+        }
         function exitFullscreenVideo() { document.getElementById('fullscreenVideo').classList.remove('active'); }
 
-        // Модальные окна
+        // ====================== МОДАЛКИ ======================
         function openBackupModal() { document.getElementById('backupModal').classList.add('active'); }
         function closeBackupModal() { document.getElementById('backupModal').classList.remove('active'); }
-        function openEditModal() { document.getElementById('editModal').classList.add('active'); updateThemeSelectors(); loadHistoryForm(); }
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('active');
+            updateThemeSelectors();
+            loadHistoryForm();
+        }
         function closeEditModal() { document.getElementById('editModal').classList.remove('active'); }
         function openHelpModal() { document.getElementById('helpModal').classList.add('active'); }
         function closeHelpModal() { document.getElementById('helpModal').classList.remove('active'); }
         function openAuthorModal() { document.getElementById('authorModal').classList.add('active'); }
         function closeAuthorModal() { document.getElementById('authorModal').classList.remove('active'); }
-        function scrollToHelp(id) { const el = document.getElementById('help-'+id); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
-
-        function downloadBackup() {
-            const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'chelny_backup.json'; a.click();
+        function scrollToHelp(id) {
+            const el = document.getElementById('help-' + id);
+            const content = document.querySelector('.help-content');
+            if (el && content) {
+                const top = el.offsetTop - 20;
+                content.scrollTo({ top, behavior: 'smooth' });
+            }
+        }
+        function showEditStatus(msg, type) {
+            const s = document.getElementById('editStatus');
+            s.textContent = msg;
+            s.className = 'status-message show ' + (type === 'error' ? 'status-error' : 'status-success');
+            setTimeout(() => s.classList.remove('show'), 3500);
         }
 
+        // Закрытие модалок по клику на фон и Escape
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', e => {
+                if (e.target === m && m.id !== 'fullscreenVideo') m.classList.remove('active');
+            });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => {
+                    if (m.id !== 'fullscreenVideo') m.classList.remove('active');
+                });
+                document.getElementById('fullscreenVideo').classList.remove('active');
+            }
+        });
+
+        // ====================== БЭКАП ======================
+        function downloadBackup() {
+            try {
+                const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `chelny_backup_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+                showToast('✅ Бэкап скачан!', 'success');
+            } catch(e) { showToast('❌ Ошибка скачивания', 'error'); }
+        }
         function restoreBackup() {
             const file = document.getElementById('backupFileInput').files[0];
             if (!file) return;
+            const status = document.getElementById('importStatus');
+            status.className = 'status-message';
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.themes && data.quizzes && data.history) {
-                        appData = data; saveAll();
+                        appData = Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)), data);
+                        saveAll();
                         updateThemesUI(); updateHistoryUI(); updateScores();
-                        closeBackupModal();
-                        alert('✅ Данные восстановлены!');
-                    } else { alert('❌ Неверный формат файла'); }
-                } catch(err) { alert('❌ Ошибка чтения файла'); }
+                        status.className = 'status-message show status-success';
+                        status.textContent = '✅ Данные восстановлены!';
+                        setTimeout(() => { closeBackupModal(); showToast('Данные восстановлены!', 'success'); }, 1200);
+                    } else {
+                        status.className = 'status-message show status-error';
+                        status.textContent = '❌ Неверный формат файла';
+                    }
+                } catch(err) {
+                    status.className = 'status-message show status-error';
+                    status.textContent = '❌ Ошибка чтения файла';
+                }
+            };
+            reader.onerror = () => {
+                status.className = 'status-message show status-error';
+                status.textContent = '❌ Ошибка чтения файла';
             };
             reader.readAsText(file);
         }
+        function clearCache() {
+            if (confirm('Удалить все данные и вернуться к стандартным?')) {
+                localStorage.removeItem('chelny_full_data');
+                localStorage.removeItem('chelny_dark');
+                showToast('Кэш очищен', 'success');
+                setTimeout(() => location.reload(), 600);
+            }
+        }
+        function toggleOptimization() {
+            optimizationMode = !optimizationMode;
+            const btn = document.getElementById('optimizeBtn');
+            if (optimizationMode) {
+                document.body.classList.add('optimization');
+                btn.innerHTML = '<i class="fas fa-tachometer-alt"></i> Высокое качество';
+                showToast('Режим экономии включён', 'success');
+            } else {
+                document.body.classList.remove('optimization');
+                btn.innerHTML = '<i class="fas fa-tachometer-alt"></i> Режим экономии';
+                showToast('Высокое качество включено', 'success');
+            }
+        }
 
-        function clearCache() { if (confirm('Очистить все данные?')) { localStorage.clear(); location.reload(); } }
-
-        // Редактирование
+        // ====================== РЕДАКТИРОВАНИЕ ======================
         function switchEditTab(tab) {
             document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tab+'Tab').classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
             document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
             if (tab === 'questions') loadQuestionsForTheme();
             else if (tab === 'locations') loadLocationsForTheme();
             else if (tab === 'videos') loadVideosForTheme();
         }
-
         function updateThemeSelectors() {
-            ['themeSelect','questionTheme','locationTheme','videoTheme'].forEach(id => {
-                const s = document.getElementById(id); s.innerHTML = '<option value="">-- Новая тема --</option>';
-                appData.themes.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = t.name; s.appendChild(o); });
-            });
+            const quizThemes = appData.themes.filter(t => t.type === 'quiz');
+            const photoThemes = appData.themes.filter(t => t.type === 'photo');
+            const videoThemes = appData.themes.filter(t => t.type === 'video');
+            const allThemes = appData.themes;
+
+            fillSelect('themeSelect', allThemes.map(t => [t.id, t.name]), '-- Новая тема --');
+            fillSelect('questionTheme', quizThemes.map(t => [t.id, t.name]), '-- Выберите --');
+            fillSelect('locationTheme', photoThemes.map(t => [t.id, t.name]), '-- Выберите --');
+            fillSelect('videoTheme', videoThemes.map(t => [t.id, t.name]), '-- Выберите --');
+        }
+        function fillSelect(id, opts, placeholder) {
+            const s = document.getElementById(id);
+            s.innerHTML = `<option value="">${placeholder}</option>` +
+                opts.map(([v, l]) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`).join('');
         }
 
+        // --- Темы ---
+        const themeSelect = document.getElementById('themeSelect');
+        themeSelect.addEventListener('change', () => loadThemeForm(themeSelect.value));
+        function loadThemeForm(id) {
+            const t = id ? appData.themes.find(x => x.id === id) : null;
+            document.getElementById('editThemeName').value = t ? t.name : '';
+            document.getElementById('editThemeType').value = t ? t.type : 'quiz';
+            document.getElementById('editThemeIcon').value = t ? (t.icon || '') : '';
+            document.getElementById('editThemeDesc').value = t ? (t.description || '') : '';
+            document.getElementById('deleteThemeBtn').style.display = t ? 'inline-flex' : 'none';
+        }
         function saveTheme() {
-            const id = document.getElementById('themeSelect').value;
+            const id = themeSelect.value;
             const name = document.getElementById('editThemeName').value.trim();
             const type = document.getElementById('editThemeType').value;
             const icon = document.getElementById('editThemeIcon').value.trim() || 'fas fa-folder';
             const desc = document.getElementById('editThemeDesc').value.trim();
-            if (!name) { alert('Введите название'); return; }
+            if (!name) { showEditStatus('Введите название', 'error'); return; }
             if (!id) {
-                const newId = name.toLowerCase().replace(/[^a-z0-9]/g,'_');
+                let newId = name.toLowerCase().replace(/[^a-z0-9а-яё]/gi, '_');
+                let suffix = 1;
+                while (appData.themes.some(t => t.id === newId)) { newId = name.toLowerCase().replace(/[^a-z0-9а-яё]/gi, '_') + '_' + suffix++; }
                 appData.themes.push({ id: newId, name, type, icon, description: desc });
-                if (type==='quiz') appData.quizzes[newId] = { type:'quiz', name, questions:[] };
-                else if (type==='photo') appData.photoTours[newId] = { type:'photo', name, locations:[] };
-                else appData.videoTours[newId] = { type:'video', name, videos:[] };
+                if (type === 'quiz') appData.quizzes[newId] = { type: 'quiz', name, questions: [] };
+                else if (type === 'photo') appData.photoTours[newId] = { type: 'photo', name, locations: [] };
+                else appData.videoTours[newId] = { type: 'video', name, videos: [] };
             } else {
                 const idx = appData.themes.findIndex(t => t.id === id);
-                if (idx !== -1) appData.themes[idx] = { ...appData.themes[idx], name, type, icon, description: desc };
+                if (idx !== -1) appData.themes[idx] = Object.assign({}, appData.themes[idx], { name, type, icon, description: desc });
             }
-            saveAll(); updateThemesUI(); updateThemeSelectors(); closeEditModal();
+            saveAll(); updateThemesUI(); updateThemeSelectors();
+            showEditStatus('✅ Тема сохранена', 'success');
+            setTimeout(closeEditModal, 800);
         }
+        function deleteTheme() {
+            const id = themeSelect.value;
+            if (!id) return;
+            if (!confirm('Удалить тему "' + (appData.themes.find(t => t.id === id) || {}).name + '" и весь её контент?')) return;
+            appData.themes = appData.themes.filter(t => t.id !== id);
+            delete appData.quizzes[id]; delete appData.photoTours[id]; delete appData.videoTours[id];
+            delete appData.visitedLocations[id]; delete appData.watchedVideos[id];
+            saveAll(); updateThemesUI(); updateThemeSelectors();
+            addNewTheme();
+            showEditStatus('🗑️ Тема удалена', 'success');
+        }
+        function addNewTheme() { themeSelect.value = ''; loadThemeForm(''); }
 
+        // --- Вопросы ---
+        const questionTheme = document.getElementById('questionTheme');
+        const questionSelect = document.getElementById('questionSelect');
+        questionTheme.addEventListener('change', loadQuestionsForTheme);
+        questionSelect.addEventListener('change', () => loadQuestionForm(questionTheme.value, questionSelect.value));
+        function loadQuestionsForTheme() {
+            const tid = questionTheme.value;
+            fillSelect('questionSelect', [], '-- Новый вопрос --');
+            if (!tid) { loadQuestionForm('', ''); return; }
+            const q = (appData.quizzes[tid] && appData.quizzes[tid].questions) || [];
+            fillSelect('questionSelect', q.map((_, i) => [i, 'Вопрос ' + (i + 1)]), '-- Новый вопрос --');
+            loadQuestionForm(tid, '');
+        }
+        function loadQuestionForm(tid, idx) {
+            const isNew = (idx === '' || idx === null);
+            document.getElementById('editQuestionText').value = '';
+            document.getElementById('editQuestionImage').value = '';
+            document.getElementById('editQuestionInfo').value = '';
+            document.getElementById('optionsContainer').innerHTML = '';
+            document.getElementById('deleteQuestionBtn').style.display = isNew ? 'none' : 'inline-flex';
+            if (!tid || isNew) return;
+            const q = appData.quizzes[tid].questions[parseInt(idx)];
+            if (!q) return;
+            document.getElementById('editQuestionText').value = q.question || '';
+            document.getElementById('editQuestionImage').value = q.image || '';
+            document.getElementById('editQuestionInfo').value = q.info || '';
+            (q.options || []).forEach(o => addOption(o.text, o.correct));
+        }
+        function addOption(text = '', correct = false) {
+            const c = document.getElementById('optionsContainer');
+            const d = document.createElement('div');
+            d.className = 'option-row';
+            d.innerHTML = `
+                <input type="text" class="form-control" placeholder="Текст варианта" value="${escapeHtml(text)}">
+                <label><input type="radio" name="correctOption" ${correct ? 'checked' : ''}> Правильный</label>
+                <button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`;
+            c.appendChild(d);
+        }
+        function saveQuestion() {
+            const tid = questionTheme.value;
+            if (!tid) { showEditStatus('Выберите тему', 'error'); return; }
+            const text = document.getElementById('editQuestionText').value.trim();
+            const image = document.getElementById('editQuestionImage').value.trim();
+            const info = document.getElementById('editQuestionInfo').value.trim();
+            if (!text) { showEditStatus('Введите текст вопроса', 'error'); return; }
+            if (!info) { showEditStatus('Введите информацию', 'error'); return; }
+            const rows = document.querySelectorAll('#optionsContainer .option-row');
+            if (rows.length < 2) { showEditStatus('Нужно минимум 2 варианта', 'error'); return; }
+            const options = [];
+            let hasCorrect = false;
+            rows.forEach(r => {
+                const t = r.querySelector('input[type="text"]').value.trim();
+                const c = r.querySelector('input[type="radio"]').checked;
+                if (t) { options.push({ text: t, correct: c }); if (c) hasCorrect = true; }
+            });
+            if (options.length < 2) { showEditStatus('Нужно минимум 2 непустых варианта', 'error'); return; }
+            if (!hasCorrect) { showEditStatus('Отметьте правильный вариант', 'error'); return; }
+            if (!appData.quizzes[tid]) appData.quizzes[tid] = { type: 'quiz', name: appData.themes.find(t => t.id === tid).name, questions: [] };
+            const idx = questionSelect.value;
+            const newQ = { question: text, image, info, options };
+            if (idx === '' || idx === null) appData.quizzes[tid].questions.push(newQ);
+            else appData.quizzes[tid].questions[parseInt(idx)] = newQ;
+            saveAll();
+            showEditStatus('✅ Вопрос сохранён', 'success');
+            loadQuestionsForTheme();
+        }
+        function deleteQuestion() {
+            const tid = questionTheme.value;
+            const idx = questionSelect.value;
+            if (!tid || idx === '' || idx === null) return;
+            if (!confirm('Удалить этот вопрос?')) return;
+            appData.quizzes[tid].questions.splice(parseInt(idx), 1);
+            saveAll();
+            showEditStatus('🗑️ Вопрос удалён', 'success');
+            loadQuestionsForTheme();
+        }
+        function addNewQuestion() { questionSelect.value = ''; loadQuestionForm(questionTheme.value, ''); }
+
+        // --- Локации ---
+        const locationTheme = document.getElementById('locationTheme');
+        const locationSelect = document.getElementById('locationSelect');
+        locationTheme.addEventListener('change', loadLocationsForTheme);
+        locationSelect.addEventListener('change', () => loadLocationForm(locationTheme.value, locationSelect.value));
+        function loadLocationsForTheme() {
+            const tid = locationTheme.value;
+            fillSelect('locationSelect', [], '-- Новая --');
+            if (!tid) { loadLocationForm('', ''); return; }
+            const l = (appData.photoTours[tid] && appData.photoTours[tid].locations) || [];
+            fillSelect('locationSelect', l.map((x, i) => [i, x.name || ('Локация ' + (i + 1))]), '-- Новая --');
+            loadLocationForm(tid, '');
+        }
+        function loadLocationForm(tid, idx) {
+            const isNew = (idx === '' || idx === null);
+            ['editLocationName', 'editLocationImage', 'editLocationDesc', 'editLocationYear', 'editLocationFunFact'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('deleteLocationBtn').style.display = isNew ? 'none' : 'inline-flex';
+            if (!tid || isNew) return;
+            const l = appData.photoTours[tid].locations[parseInt(idx)];
+            if (!l) return;
+            document.getElementById('editLocationName').value = l.name || '';
+            document.getElementById('editLocationImage').value = l.image || '';
+            document.getElementById('editLocationDesc').value = l.description || '';
+            document.getElementById('editLocationYear').value = l.year || '';
+            document.getElementById('editLocationFunFact').value = l.funFact || '';
+        }
+        function saveLocation() {
+            const tid = locationTheme.value;
+            if (!tid) { showEditStatus('Выберите тему', 'error'); return; }
+            const name = document.getElementById('editLocationName').value.trim();
+            const image = document.getElementById('editLocationImage').value.trim();
+            const desc = document.getElementById('editLocationDesc').value.trim();
+            if (!name) { showEditStatus('Введите название', 'error'); return; }
+            if (!desc) { showEditStatus('Введите описание', 'error'); return; }
+            if (!appData.photoTours[tid]) appData.photoTours[tid] = { type: 'photo', name: appData.themes.find(t => t.id === tid).name, locations: [] };
+            const idx = locationSelect.value;
+            const newL = { name, image, description: desc, year: document.getElementById('editLocationYear').value.trim(), funFact: document.getElementById('editLocationFunFact').value.trim() };
+            if (idx === '' || idx === null) appData.photoTours[tid].locations.push(newL);
+            else appData.photoTours[tid].locations[parseInt(idx)] = newL;
+            saveAll();
+            showEditStatus('✅ Локация сохранена', 'success');
+            loadLocationsForTheme();
+        }
+        function deleteLocation() {
+            const tid = locationTheme.value;
+            const idx = locationSelect.value;
+            if (!tid || idx === '' || idx === null) return;
+            if (!confirm('Удалить эту локацию?')) return;
+            appData.photoTours[tid].locations.splice(parseInt(idx), 1);
+            saveAll();
+            showEditStatus('🗑️ Локация удалена', 'success');
+            loadLocationsForTheme();
+        }
+        function addNewLocation() { locationSelect.value = ''; loadLocationForm(locationTheme.value, ''); }
+
+        // --- Видео ---
+        const videoTheme = document.getElementById('videoTheme');
+        const videoSelect = document.getElementById('videoSelect');
+        videoTheme.addEventListener('change', loadVideosForTheme);
+        videoSelect.addEventListener('change', () => loadVideoForm(videoTheme.value, videoSelect.value));
+        function loadVideosForTheme() {
+            const tid = videoTheme.value;
+            fillSelect('videoSelect', [], '-- Новое --');
+            if (!tid) { loadVideoForm('', ''); return; }
+            const v = (appData.videoTours[tid] && appData.videoTours[tid].videos) || [];
+            fillSelect('videoSelect', v.map((x, i) => [i, x.title || ('Видео ' + (i + 1))]), '-- Новое --');
+            loadVideoForm(tid, '');
+        }
+        function loadVideoForm(tid, idx) {
+            const isNew = (idx === '' || idx === null);
+            ['editVideoTitle', 'editVideoUrl', 'editVideoDescription', 'editVideoYear'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('editVideoDuration').value = 5;
+            document.getElementById('deleteVideoBtn').style.display = isNew ? 'none' : 'inline-flex';
+            if (!tid || isNew) return;
+            const v = appData.videoTours[tid].videos[parseInt(idx)];
+            if (!v) return;
+            document.getElementById('editVideoTitle').value = v.title || '';
+            document.getElementById('editVideoUrl').value = v.url || '';
+            document.getElementById('editVideoDescription').value = v.description || '';
+            document.getElementById('editVideoYear').value = v.year || '';
+            document.getElementById('editVideoDuration').value = v.duration || 5;
+        }
+        function saveVideo() {
+            const tid = videoTheme.value;
+            if (!tid) { showEditStatus('Выберите тему', 'error'); return; }
+            const title = document.getElementById('editVideoTitle').value.trim();
+            const url = document.getElementById('editVideoUrl').value.trim();
+            const desc = document.getElementById('editVideoDescription').value.trim();
+            if (!title) { showEditStatus('Введите название', 'error'); return; }
+            if (!url) { showEditStatus('Введите ссылку', 'error'); return; }
+            if (!desc) { showEditStatus('Введите описание', 'error'); return; }
+            if (!appData.videoTours[tid]) appData.videoTours[tid] = { type: 'video', name: appData.themes.find(t => t.id === tid).name, videos: [] };
+            const idx = videoSelect.value;
+            const newV = { title, url, description: desc, year: document.getElementById('editVideoYear').value.trim(), duration: parseInt(document.getElementById('editVideoDuration').value) || 5 };
+            if (idx === '' || idx === null) appData.videoTours[tid].videos.push(newV);
+            else appData.videoTours[tid].videos[parseInt(idx)] = newV;
+            saveAll();
+            showEditStatus('✅ Видео сохранено', 'success');
+            loadVideosForTheme();
+        }
+        function deleteVideo() {
+            const tid = videoTheme.value;
+            const idx = videoSelect.value;
+            if (!tid || idx === '' || idx === null) return;
+            if (!confirm('Удалить это видео?')) return;
+            appData.videoTours[tid].videos.splice(parseInt(idx), 1);
+            saveAll();
+            showEditStatus('🗑️ Видео удалено', 'success');
+            loadVideosForTheme();
+        }
+        function addNewVideo() { videoSelect.value = ''; loadVideoForm(videoTheme.value, ''); }
+
+        // --- История ---
+        function loadHistoryForm() {
+            document.getElementById('editHistoryTitle').value = appData.history.title;
+            const fc = document.getElementById('historyFactsContainer');
+            fc.innerHTML = '';
+            (appData.history.facts || []).forEach(f => {
+                const d = document.createElement('div');
+                d.className = 'option-row';
+                d.innerHTML = `<input class="form-control" placeholder="Заголовок" value="${escapeHtml(f.title)}"><input class="form-control" placeholder="Содержание" value="${escapeHtml(f.content)}"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`;
+                fc.appendChild(d);
+            });
+            const tc = document.getElementById('historyTimelineContainer');
+            tc.innerHTML = '';
+            (appData.history.timeline || []).forEach(e => {
+                const d = document.createElement('div');
+                d.className = 'option-row';
+                d.innerHTML = `<input class="form-control" placeholder="Год" value="${escapeHtml(e.year)}"><input class="form-control" placeholder="Событие" value="${escapeHtml(e.event)}"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`;
+                tc.appendChild(d);
+            });
+        }
+        function addHistoryFact() {
+            const fc = document.getElementById('historyFactsContainer');
+            const d = document.createElement('div');
+            d.className = 'option-row';
+            d.innerHTML = `<input class="form-control" placeholder="Заголовок"><input class="form-control" placeholder="Содержание"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`;
+            fc.appendChild(d);
+        }
+        function addTimelineEvent() {
+            const tc = document.getElementById('historyTimelineContainer');
+            const d = document.createElement('div');
+            d.className = 'option-row';
+            d.innerHTML = `<input class="form-control" placeholder="Год"><input class="form-control" placeholder="Событие"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`;
+            tc.appendChild(d);
+        }
         function saveHistory() {
-            appData.history.title = document.getElementById('editHistoryTitle').value.trim();
-            appData.history.facts = []; appData.history.timeline = [];
+            appData.history.title = document.getElementById('editHistoryTitle').value.trim() || 'История';
+            appData.history.facts = [];
+            appData.history.timeline = [];
             document.querySelectorAll('#historyFactsContainer .option-row').forEach(r => {
                 const inputs = r.querySelectorAll('input');
-                if (inputs[0].value.trim() && inputs[1].value.trim()) appData.history.facts.push({ title: inputs[0].value.trim(), content: inputs[1].value.trim() });
+                if (inputs[0].value.trim() && inputs[1].value.trim()) {
+                    appData.history.facts.push({ title: inputs[0].value.trim(), content: inputs[1].value.trim() });
+                }
             });
             document.querySelectorAll('#historyTimelineContainer .option-row').forEach(r => {
                 const inputs = r.querySelectorAll('input');
-                if (inputs[0].value.trim() && inputs[1].value.trim()) appData.history.timeline.push({ year: inputs[0].value.trim(), event: inputs[1].value.trim() });
+                if (inputs[0].value.trim() && inputs[1].value.trim()) {
+                    appData.history.timeline.push({ year: inputs[0].value.trim(), event: inputs[1].value.trim() });
+                }
             });
-            saveAll(); updateHistoryUI(); closeEditModal();
+            saveAll(); updateHistoryUI();
+            showEditStatus('✅ История сохранена', 'success');
+            setTimeout(closeEditModal, 800);
         }
 
-        function loadHistoryForm() {
-            document.getElementById('editHistoryTitle').value = appData.history.title;
-            const fc = document.getElementById('historyFactsContainer'); fc.innerHTML = '';
-            appData.history.facts.forEach(f => { const d = document.createElement('div'); d.className = 'option-row'; d.innerHTML = `<input class="form-control" value="${escapeHtml(f.title)}"><input class="form-control" value="${escapeHtml(f.content)}"><button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`; fc.appendChild(d); });
-            const tc = document.getElementById('historyTimelineContainer'); tc.innerHTML = '';
-            appData.history.timeline.forEach(e => { const d = document.createElement('div'); d.className = 'option-row'; d.innerHTML = `<input class="form-control" value="${escapeHtml(e.year)}"><input class="form-control" value="${escapeHtml(e.event)}"><button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`; tc.appendChild(d); });
-        }
-
-        function addHistoryFact() { const d = document.createElement('div'); d.className = 'option-row'; d.innerHTML = '<input class="form-control" placeholder="Заголовок"><input class="form-control" placeholder="Содержание"><button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>'; document.getElementById('historyFactsContainer').appendChild(d); }
-        function addTimelineEvent() { const d = document.createElement('div'); d.className = 'option-row'; d.innerHTML = '<input class="form-control" placeholder="Год"><input class="form-control" placeholder="Событие"><button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>'; document.getElementById('historyTimelineContainer').appendChild(d); }
-        function addNewTheme() { document.getElementById('themeSelect').value = ''; document.getElementById('editThemeName').value = ''; }
-        function deleteTheme() { const id = document.getElementById('themeSelect').value; if (!id || !confirm('Удалить?')) return; appData.themes = appData.themes.filter(t => t.id !== id); delete appData.quizzes[id]; delete appData.photoTours[id]; delete appData.videoTours[id]; saveAll(); updateThemesUI(); updateThemeSelectors(); closeEditModal(); }
-        function addOption() { const d = document.createElement('div'); d.className = 'option-row'; d.innerHTML = `<input class="form-control" placeholder="Текст"><label><input type="radio" name="correctOpt"> Правильный</label><button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">×</button>`; document.getElementById('optionsContainer').appendChild(d); }
-        function addNewQuestion() { document.getElementById('questionSelect').value = ''; document.getElementById('editQuestionText').value = ''; }
-        function addNewLocation() { document.getElementById('locationSelect').value = ''; }
-        function addNewVideo() { document.getElementById('videoSelect').value = ''; }
-        function loadQuestionsForTheme() {}
-        function loadLocationsForTheme() {}
-        function loadVideosForTheme() {}
-        function saveQuestion() { alert('Функция сохранения вопроса'); }
-        function saveLocation() { alert('Функция сохранения локации'); }
-        function saveVideo() { alert('Функция сохранения видео'); }
-        function deleteQuestion() {}
-        function deleteLocation() {}
-        function deleteVideo() {}
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
+        // ====================== ИНИЦИАЛИЗАЦИЯ ======================
+        document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('chelny_dark') === 'true') {
-                document.body.classList.add('dark-theme');
+                document.body.classList.add('dark');
                 document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i> Светлая тема';
             }
 
@@ -900,18 +2220,54 @@
             document.getElementById('editBtn').addEventListener('click', openEditModal);
             document.getElementById('helpBtn').addEventListener('click', openHelpModal);
             document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
+            document.getElementById('optimizeBtn').addEventListener('click', toggleOptimization);
             document.getElementById('downloadBackupBtn').addEventListener('click', downloadBackup);
             document.getElementById('showImportBtn').addEventListener('click', () => document.getElementById('importSection').classList.add('active'));
             document.getElementById('hideImportBtn').addEventListener('click', () => document.getElementById('importSection').classList.remove('active'));
             document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
-            document.getElementById('backupFileInput').addEventListener('change', function() { document.getElementById('restoreBtn').disabled = !this.files[0]; });
+            document.getElementById('backupFileInput').addEventListener('change', e => { document.getElementById('restoreBtn').disabled = !e.target.files[0]; });
             document.getElementById('authorBtn').addEventListener('click', openAuthorModal);
-            document.querySelectorAll('.edit-tab').forEach(tab => tab.addEventListener('click', function() { switchEditTab(this.dataset.tab); }));
+            document.querySelectorAll('.edit-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchEditTab(tab.dataset.tab));
+            });
 
             updateThemesUI();
             updateHistoryUI();
             updateScores();
+
+            // Приветственный тост
+            setTimeout(() => showToast('🎖️ С Днём Победы! 9 Мая 2026', 'success'), 800);
         });
+
+        // Глобальные функции (для inline onclick)
+        window.showThemes = showThemes;
+        window.openBackupModal = openBackupModal;
+        window.closeBackupModal = closeBackupModal;
+        window.openEditModal = openEditModal;
+        window.closeEditModal = closeEditModal;
+        window.openHelpModal = openHelpModal;
+        window.closeHelpModal = closeHelpModal;
+        window.openAuthorModal = openAuthorModal;
+        window.closeAuthorModal = closeAuthorModal;
+        window.scrollToHelp = scrollToHelp;
+        window.exitFullscreenVideo = exitFullscreenVideo;
+        window.addOption = addOption;
+        window.saveTheme = saveTheme;
+        window.deleteTheme = deleteTheme;
+        window.addNewTheme = addNewTheme;
+        window.saveQuestion = saveQuestion;
+        window.deleteQuestion = deleteQuestion;
+        window.addNewQuestion = addNewQuestion;
+        window.saveLocation = saveLocation;
+        window.deleteLocation = deleteLocation;
+        window.addNewLocation = addNewLocation;
+        window.saveVideo = saveVideo;
+        window.deleteVideo = deleteVideo;
+        window.addNewVideo = addNewVideo;
+        window.addHistoryFact = addHistoryFact;
+        window.addTimelineEvent = addTimelineEvent;
+        window.saveHistory = saveHistory;
+    })();
     </script>
 </body>
 </html>
